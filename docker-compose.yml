@@ -4,3 +4,11 @@
     build:
       context: .
       dockerfile: EsPublico.Kata.Orders/Dockerfile
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: espublico
+      POSTGRES_PASSWORD: espublico
+      POSTGRES_DB: espublico
+    ports:
+      - "5432:5432"
