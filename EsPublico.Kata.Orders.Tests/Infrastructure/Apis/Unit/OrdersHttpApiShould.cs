@@ -8,6 +8,7 @@ using FluentAssertions;
 using Newtonsoft.Json;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using IHttpClientFactory = EsPublico.Kata.Orders.Infrastructure.Apis.IHttpClientFactory;
 
 namespace EsPublico.Kata.Orders.Tests.Infrastructure.Apis.Unit;
 
