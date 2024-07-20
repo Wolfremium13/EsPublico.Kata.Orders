@@ -92,3 +92,7 @@ The resulting file should be a CSV with the following columns:
 ## 🤔 Questions
 
 If you have any questions regarding the kata, you can contact us via email.
+
+## ✏️ Diagrams
+
+- [Flow Diagram](./docs/espublica-orders-flow-diagram.svg)
