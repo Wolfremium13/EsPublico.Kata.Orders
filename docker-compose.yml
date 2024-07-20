@@ -1,0 +1,6 @@
+﻿services:
+  espublico.kata.orders:
+    image: espublico.kata.orders
+    build:
+      context: .
+      dockerfile: EsPublico.Kata.Orders/Dockerfile
