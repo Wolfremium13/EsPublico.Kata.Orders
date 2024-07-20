@@ -9,6 +9,10 @@ public record Uuid
 
     public static Either<Error, Uuid> Create(string givenUuid)
     {
+        if (string.IsNullOrWhiteSpace(givenUuid))
+        {
+            return new MissingParameter("Missing UUID");
+        }
         if (!Guid.TryParse(givenUuid, out _))
         {
             return new InvalidParameter("Invalid UUID");
