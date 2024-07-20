@@ -21,7 +21,7 @@ public class UuidShould
     [Fact]
     public void NotAllowNulls()
     {
-        var invalidUuid = Uuid.Create(null);
+        var invalidUuid = Uuid.Create(null!);
 
         invalidUuid.Match(
             value => value.Should().BeNull(),

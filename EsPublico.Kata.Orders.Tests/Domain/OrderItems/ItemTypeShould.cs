@@ -21,7 +21,7 @@ public class ItemTypeShould
     [Fact]
     public void NotAllowNulls()
     {
-        var invalidItemType = ItemType.Create(null);
+        var invalidItemType = ItemType.Create(null!);
 
         invalidItemType.Match(
             value => value.Should().BeNull(),

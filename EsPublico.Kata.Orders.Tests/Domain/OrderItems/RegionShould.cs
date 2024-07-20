@@ -21,7 +21,7 @@ public class RegionShould
     [Fact]
     public void NotAllowNulls()
     {
-        var invalidRegion = Region.Create(null);
+        var invalidRegion = Region.Create(null!);
 
         invalidRegion.Match(
             value => value.Should().BeNull(),
