@@ -17,8 +17,17 @@
     <ItemGroup>
       <PackageReference Include="LanguageExt.Core" Version="4.4.9" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0-preview.6.24327.7" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.0-preview.6.24327.7"/>
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0-preview.6.24327.7" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0-preview.6.24327.7"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.0-preview.6.24327.7"/>
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0-preview.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="ConfigFiles\appsettings.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

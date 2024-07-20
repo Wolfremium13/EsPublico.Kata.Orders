@@ -1,3 +1,20 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using EsPublico.Kata.Orders.Infrastructure.Config;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
-Console.WriteLine("Hello, World!");
+// Configuration
+var configFilePath = Path.Combine(Directory.GetCurrentDirectory(), "ConfigFiles");
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(configFilePath)
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
+var databaseSettings = new DatabaseSettings();
+configuration.GetSection("DatabaseSettings").Bind(databaseSettings);
+
+// Logging
+var loggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
+
+var logger = loggerFactory.CreateLogger<Program>();
+logger.LogInformation("Application started");
+
+logger.LogInformation("Application stopped");
