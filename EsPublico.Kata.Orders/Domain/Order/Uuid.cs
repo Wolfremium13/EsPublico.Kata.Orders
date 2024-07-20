@@ -1,6 +1,6 @@
 using LanguageExt;
 
-namespace EsPublico.Kata.Orders.Domain.Models;
+namespace EsPublico.Kata.Orders.Domain.Order;
 
 public record Uuid
 {
@@ -13,6 +13,7 @@ public record Uuid
         {
             return new MissingParameter("Missing UUID");
         }
+
         if (!Guid.TryParse(givenUuid, out _))
         {
             return new InvalidParameter("Invalid UUID");

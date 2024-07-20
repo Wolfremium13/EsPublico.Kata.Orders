@@ -1,8 +1,8 @@
 using EsPublico.Kata.Orders.Domain;
-using EsPublico.Kata.Orders.Domain.Models;
+using EsPublico.Kata.Orders.Domain.Order;
 using FluentAssertions;
 
-namespace EsPublico.Kata.Orders.Tests.Domain.Models;
+namespace EsPublico.Kata.Orders.Tests.Domain.Order;
 
 public class IdShould
 {

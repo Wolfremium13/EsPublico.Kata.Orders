@@ -1,6 +1,6 @@
 using LanguageExt;
 
-namespace EsPublico.Kata.Orders.Domain.Models;
+namespace EsPublico.Kata.Orders.Domain.Order;
 
 public class Country
 {
