@@ -10,6 +10,8 @@ var configuration = new ConfigurationBuilder()
     .Build();
 var databaseSettings = new DatabaseSettings();
 configuration.GetSection("DatabaseSettings").Bind(databaseSettings);
+var apiSettings = new ApiSettings();
+configuration.GetSection("ApiSettings").Bind(apiSettings);
 
 // Logging
 var loggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
