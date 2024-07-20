@@ -1,8 +1,8 @@
 using EsPublico.Kata.Orders.Domain;
-using EsPublico.Kata.Orders.Domain.Order;
+using EsPublico.Kata.Orders.Domain.OrderItems;
 using FluentAssertions;
 
-namespace EsPublico.Kata.Orders.Tests.Domain.Order;
+namespace EsPublico.Kata.Orders.Tests.Domain.OrderItems;
 
 public class CountryShould
 {
@@ -21,7 +21,7 @@ public class CountryShould
     [Fact]
     public void NotAllowNulls()
     {
-        var invalidCountry = Country.Create(null);
+        var invalidCountry = Country.Create(null!);
 
         invalidCountry.Match(
             value => value.Should().BeNull(),

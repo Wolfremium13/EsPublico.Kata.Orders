@@ -1,6 +1,6 @@
 using LanguageExt;
 
-namespace EsPublico.Kata.Orders.Domain.Order;
+namespace EsPublico.Kata.Orders.Domain.OrderItems;
 
 public class SalesChannel
 {

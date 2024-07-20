@@ -1,8 +1,8 @@
 using EsPublico.Kata.Orders.Domain;
-using EsPublico.Kata.Orders.Domain.Order;
+using EsPublico.Kata.Orders.Domain.OrderItems;
 using FluentAssertions;
 
-namespace EsPublico.Kata.Orders.Tests.Domain.Order;
+namespace EsPublico.Kata.Orders.Tests.Domain.OrderItems;
 
 public class UuidShould
 {
