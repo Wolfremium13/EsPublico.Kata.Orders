@@ -18,7 +18,7 @@ public class OrdersHttpApiShould : IDisposable
         _server = WireMockServer.Start();
         var apiSettings = new ApiSettings
         {
-            BaseUrl = _server.Url
+            BaseUrl = _server.Url!
         };
         var httpClientFactory = new HttpClientFactory();
         _ordersHttpApi = new OrdersHttpApi(httpClientFactory, apiSettings);
