@@ -1,34 +1,52 @@
+using Newtonsoft.Json;
+
 namespace EsPublico.Kata.Orders.Infrastructure.Apis.Models;
 
 public class SuccessResponse
 {
-    public int Page { get; set; }
-    public List<OrderResponse> Content { get; set; }
-    public LinksResponse LinksResponse { get; set; }
+    [JsonProperty("page")] public int Page { get; set; }
+    [JsonProperty("content")] public List<OrderResponse> Content { get; set; }
+    [JsonProperty("links")] public LinksResponse LinksResponse { get; set; }
 }
 
 public class OrderResponse
 {
-    public string Uuid { get; set; }
-    public long Id { get; set; }
-    public string Region { get; set; }
-    public string Country { get; set; }
-    public string ItemType { get; set; }
-    public string SalesChannel { get; set; }
-    public string Priority { get; set; }
-    public string Date { get; set; }
-    public string ShipDate { get; set; }
-    public long UnitsSold { get; set; }
-    public decimal UnitPrice { get; set; }
-    public decimal UnitCost { get; set; }
-    public decimal TotalRevenue { get; set; }
-    public decimal TotalCost { get; set; }
-    public decimal TotalProfit { get; set; }
-    public LinksResponse LinksResponse { get; set; }
+    [JsonProperty("uuid")] public string Uuid { get; set; }
+
+    [JsonProperty("id")] public long Id { get; set; }
+
+    [JsonProperty("region")] public string Region { get; set; }
+
+    [JsonProperty("country")] public string Country { get; set; }
+
+    [JsonProperty("item_type")] public string ItemType { get; set; }
+
+    [JsonProperty("sales_channel")] public string SalesChannel { get; set; }
+
+    [JsonProperty("priority")] public string Priority { get; set; }
+
+    [JsonProperty("date")] public string Date { get; set; }
+
+    [JsonProperty("ship_date")] public string ShipDate { get; set; }
+
+    [JsonProperty("units_sold")] public long UnitsSold { get; set; }
+
+    [JsonProperty("unit_price")] public decimal UnitPrice { get; set; }
+
+    [JsonProperty("unit_cost")] public decimal UnitCost { get; set; }
+
+    [JsonProperty("total_revenue")] public decimal TotalRevenue { get; set; }
+
+    [JsonProperty("total_cost")] public decimal TotalCost { get; set; }
+
+    [JsonProperty("total_profit")] public decimal TotalProfit { get; set; }
+
+    [JsonProperty("links")] public LinksResponse LinksResponse { get; set; }
 }
 
 public class LinksResponse
 {
-    public string Self { get; set; }
-    public string Next { get; set; }
+    [JsonProperty("self")] public string Self { get; set; }
+
+    [JsonProperty("next")] public string Next { get; set; }
 }

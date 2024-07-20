@@ -14,6 +14,7 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
             try
             {
                 var client = httpClientFactory.CreateClient();
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
                 var response = await client.GetAsync($"{apiSettings.BaseUrl}/orders?page={pageNumber}");
                 if (!response.IsSuccessStatusCode)
                 {

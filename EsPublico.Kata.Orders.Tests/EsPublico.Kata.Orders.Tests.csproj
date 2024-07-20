@@ -34,4 +34,10 @@
       <ProjectReference Include="..\EsPublico.Kata.Orders\EsPublico.Kata.Orders.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Update="Infrastructure\Apis\Integration\Resources\ok_response.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
 </Project>
