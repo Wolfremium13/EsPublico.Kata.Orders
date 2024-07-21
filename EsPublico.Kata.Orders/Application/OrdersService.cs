@@ -2,13 +2,15 @@ using EsPublico.Kata.Orders.Domain;
 using EsPublico.Kata.Orders.Infrastructure.Apis;
 using EsPublico.Kata.Orders.Infrastructure.Repositories;
 using LanguageExt;
+using Microsoft.Extensions.Logging;
 
 namespace EsPublico.Kata.Orders.Application;
 
 public class OrdersService(
     OrdersRepository ordersRepository,
     FilesRepository filesRepository,
-    OrdersApi ordersApi)
+    OrdersApi ordersApi,
+    ILogger<OrdersService> logger)
 {
     public async Task Ingest()
     {
@@ -20,6 +22,7 @@ public class OrdersService(
         }
 
         var orders = maybeFirstOrders.RightAsEnumerable().First();
+        logger.LogInformation($"Ingested {orders.Value.Count} orders");
         while (orders is OrdersWithNextPage ordersWithNextPage)
         {
             var nextOrders = await NextOrdersCall(ordersWithNextPage.NextOrdersLink);
@@ -31,7 +34,9 @@ public class OrdersService(
             }
 
             orders = nextOrders.RightAsEnumerable().First();
+            logger.LogInformation($"Ingested {orders.Value.Count} orders");
         }
+        logger.LogInformation("Ingestion finished");
     }
 
     private async Task<Either<Error, Domain.Orders>> FirstOrdersCall()

@@ -3,11 +3,15 @@ using EsPublico.Kata.Orders.Domain.OrderItems;
 using EsPublico.Kata.Orders.Infrastructure.Apis.Models;
 using EsPublico.Kata.Orders.Infrastructure.Config;
 using LanguageExt;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace EsPublico.Kata.Orders.Infrastructure.Apis
 {
-    public class OrdersHttpApi(IHttpClientFactory httpClientFactory, ApiSettings apiSettings) : OrdersApi
+    public class OrdersHttpApi(
+        IHttpClientFactory httpClientFactory,
+        ApiSettings apiSettings,
+        ILogger<OrdersHttpApi> logger) : OrdersApi
     {
         public async Task<Either<Error, Domain.Orders>> Get(NextOrdersLink nextOrdersLink)
         {
@@ -19,7 +23,7 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
             return await RequestHandler(SendRequest);
         }
 
-        private static async Task<Either<Error, Domain.Orders>> RequestHandler(
+        private async Task<Either<Error, Domain.Orders>> RequestHandler(
             Func<Task<HttpResponseMessage>> sendRequestFunc)
         {
             try
@@ -27,6 +31,7 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
                 var response = await sendRequestFunc();
                 if (!response.IsSuccessStatusCode)
                 {
+                    logger.LogError($"Error getting orders: HTTP status code {response.StatusCode} - {response.ReasonPhrase}");
                     return new Error($"Error getting orders: HTTP status code {response.StatusCode}" +
                                      $" - {response.ReasonPhrase}");
                 }
@@ -38,6 +43,7 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
             }
             catch (Exception e)
             {
+                logger.LogError(e, "Error getting orders");
                 return new Error($"Error getting orders: {e.Message}");
             }
         }

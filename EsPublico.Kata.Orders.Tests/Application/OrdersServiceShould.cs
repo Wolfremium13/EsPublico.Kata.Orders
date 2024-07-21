@@ -5,6 +5,7 @@ using EsPublico.Kata.Orders.Infrastructure.Repositories;
 using EsPublico.Kata.Orders.Tests.Domain.Builders;
 using FluentAssertions;
 using LanguageExt;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 namespace EsPublico.Kata.Orders.Tests.Application;
@@ -21,7 +22,8 @@ public class OrdersServiceShould
         _ordersApi = Substitute.For<OrdersApi>();
         _ordersRepository = Substitute.For<OrdersRepository>();
         _filesRepository = Substitute.For<FilesRepository>();
-        _service = new OrdersService(_ordersRepository, _filesRepository, _ordersApi);
+        var logger = Substitute.For<ILogger<OrdersService>>();
+        _service = new OrdersService(_ordersRepository, _filesRepository, _ordersApi, logger);
     }
 
     [Fact]

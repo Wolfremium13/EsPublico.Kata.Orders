@@ -3,11 +3,14 @@ using EsPublico.Kata.Orders.Domain;
 using EsPublico.Kata.Orders.Domain.OrderItems;
 using EsPublico.Kata.Orders.Infrastructure.Databases;
 using LanguageExt;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 
 namespace EsPublico.Kata.Orders.Infrastructure.Repositories;
 
-public class PostgresOrdersRepository(PostgresAdapter adapter) : OrdersRepository
+public class PostgresOrdersRepository(
+    PostgresAdapter adapter,
+    ILogger<PostgresOrdersRepository> logger) : OrdersRepository
 {
     public async Task<Either<Error, Unit>> Save(List<Order> orders)
     {
@@ -24,11 +27,12 @@ public class PostgresOrdersRepository(PostgresAdapter adapter) : OrdersRepositor
 
                 await cmd.ExecuteNonQueryAsync();
             });
-
+            logger.LogInformation($"Saved {orders.Count} orders");
             return Unit.Default;
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "Error saving orders");
             return new Error(ex.Message);
         }
     }

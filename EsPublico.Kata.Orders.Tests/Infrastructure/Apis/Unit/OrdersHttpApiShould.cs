@@ -5,6 +5,7 @@ using EsPublico.Kata.Orders.Infrastructure.Apis.Models;
 using EsPublico.Kata.Orders.Infrastructure.Config;
 using EsPublico.Kata.Orders.Tests.Infrastructure.Fixtures;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -28,7 +29,10 @@ public class OrdersHttpApiShould
     public OrdersHttpApiShould()
     {
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
-        _ordersHttpApi = new OrdersHttpApi(_httpClientFactory, _apiSettings);
+        _ordersHttpApi = new OrdersHttpApi(
+            _httpClientFactory,
+            _apiSettings,
+            Substitute.For<ILogger<OrdersHttpApi>>());
     }
 
     [Fact]

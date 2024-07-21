@@ -2,6 +2,8 @@ using EsPublico.Kata.Orders.Domain;
 using EsPublico.Kata.Orders.Infrastructure.Apis;
 using EsPublico.Kata.Orders.Infrastructure.Config;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
 using WireMock.RequestBuilders;
 using WireMock.ResponseBuilders;
 using WireMock.Server;
@@ -22,7 +24,10 @@ public class OrdersHttpApiShould : IDisposable
             BaseUrl = $"{_server.Url}/v1/orders"
         };
         var httpClientFactory = new HttpClientFactory();
-        _ordersHttpApi = new OrdersHttpApi(httpClientFactory, apiSettings);
+        _ordersHttpApi = new OrdersHttpApi(
+            httpClientFactory,
+            apiSettings,
+            Substitute.For<ILogger<OrdersHttpApi>>());
     }
 
     public void Dispose() => _server.Stop();
