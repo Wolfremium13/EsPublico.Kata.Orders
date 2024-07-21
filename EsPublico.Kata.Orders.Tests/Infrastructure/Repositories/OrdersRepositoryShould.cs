@@ -25,7 +25,7 @@ public class OrdersRepositoryShould
     }
 
     // [Fact]
-    [Fact(Skip = "Integration test")]
+    [Fact(Skip = "Integration test: Needs to launch docker compose postgres")]
     public async Task Save()
     {
         var aOrder = new OrderBuilder().WithUuid("1858f59d-8884-41d7-b4fc-88cfbbf00c53").Build();
@@ -40,7 +40,7 @@ public class OrdersRepositoryShould
     }
 
     // [Fact]
-    [Fact(Skip = "Integration test")]
+    [Fact(Skip = "Integration test: Needs to launch docker compose postgres")]
     public async Task UpdatesIfExists()
     {
         var aOrder = new OrderBuilder().WithUuid("1858f59d-8884-41d7-b4fc-88cfbbf00c53").Build();
