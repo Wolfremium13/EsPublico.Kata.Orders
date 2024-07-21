@@ -10,6 +10,7 @@ namespace EsPublico.Kata.Orders.Tests.Infrastructure.Apis.Integration;
 
 public class OrdersHttpApiShould : IDisposable
 {
+    // TODO: hay que hacer el next link
     private readonly OrdersHttpApi _ordersHttpApi;
     private readonly WireMockServer _server;
 
@@ -37,7 +38,7 @@ public class OrdersHttpApiShould : IDisposable
             orders =>
             {
                 const int numberOfOrdersPerPage = 100;
-                orders.Count.Should().Be(numberOfOrdersPerPage);
+                orders.Value.Count.Should().Be(numberOfOrdersPerPage);
             },
             error => error.Should().BeNull()
         );
@@ -58,7 +59,7 @@ public class OrdersHttpApiShould : IDisposable
             orders =>
             {
                 const int numberOfOrdersPerPage = 100;
-                orders.Count.Should().Be(numberOfOrdersPerPage);
+                orders.Value.Count.Should().Be(numberOfOrdersPerPage);
             },
             error => error.Should().BeNull()
         );

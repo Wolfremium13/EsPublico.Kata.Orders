@@ -1,11 +1,10 @@
 using EsPublico.Kata.Orders.Domain;
-using EsPublico.Kata.Orders.Domain.OrderItems;
 using LanguageExt;
 
 namespace EsPublico.Kata.Orders.Infrastructure.Apis;
 
 public interface OrdersApi
 {
-    Task<Either<Error, List<Order>>> Get(NextOrdersLink nextOrdersLink);
-    Task<Either<Error, List<Order>>> Get();
+    Task<Either<Error, Domain.Orders>> Get(NextOrdersLink nextOrdersLink);
+    Task<Either<Error, Domain.Orders>> Get();
 }

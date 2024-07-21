@@ -9,17 +9,18 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
 {
     public class OrdersHttpApi(IHttpClientFactory httpClientFactory, ApiSettings apiSettings) : OrdersApi
     {
-        public async Task<Either<Error, List<Order>>> Get(NextOrdersLink nextOrdersLink)
+        public async Task<Either<Error, Domain.Orders>> Get(NextOrdersLink nextOrdersLink)
         {
-            return await GetOrders(() => SendRequest(nextOrdersLink));
+            return await RequestHandler(() => SendRequest(nextOrdersLink));
         }
 
-        public async Task<Either<Error, List<Order>>> Get()
+        public async Task<Either<Error, Domain.Orders>> Get()
         {
-            return await GetOrders(SendRequest);
+            return await RequestHandler(SendRequest);
         }
 
-        private async Task<Either<Error, List<Order>>> GetOrders(Func<Task<HttpResponseMessage>> sendRequestFunc)
+        private static async Task<Either<Error, Domain.Orders>> RequestHandler(
+            Func<Task<HttpResponseMessage>> sendRequestFunc)
         {
             try
             {
@@ -31,9 +32,22 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
                 }
 
                 var successResponse = await MapToSuccessResponse(response);
-                return successResponse != null
-                    ? MapResponseToOrders(successResponse.Content)
-                    : new Error("Success response is null");
+
+                if (successResponse == null)
+                {
+                    return new Error("Success response is null");
+                }
+
+                var orders = MapResponseToOrders(successResponse.Content);
+                var nextOrdersLink = NextOrdersLink.Create(successResponse.LinksResponse?.Next);
+
+                return orders.Match<Either<Error, Domain.Orders>>(
+                    ord => nextOrdersLink.Match<Either<Error, Domain.Orders>>(
+                        Right: nextLink => new OrdersWithNextPage(ord, nextLink),
+                        Left: _ => new Domain.Orders(ord)
+                    ),
+                    error => new Error(error.Message)
+                );
             }
             catch (Exception e)
             {

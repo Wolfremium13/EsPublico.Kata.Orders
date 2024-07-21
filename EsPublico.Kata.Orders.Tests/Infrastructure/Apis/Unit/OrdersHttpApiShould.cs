@@ -14,6 +14,7 @@ namespace EsPublico.Kata.Orders.Tests.Infrastructure.Apis.Unit;
 
 public class OrdersHttpApiShould
 {
+    // TODO: hay que hacer el next link
     private const string BaseUrl = "http://localhost:5000";
 
     private readonly ApiSettings _apiSettings = new()
@@ -34,10 +35,6 @@ public class OrdersHttpApiShould
     [Fact]
     public async Task GetOrders()
     {
-        var pageNumber = PageNumber.Create(1).Match(
-            value => value,
-            _ => throw new Exception("Invalid PageNumber")
-        );
         GivenHttpClientReturns(HttpStatusCode.OK, GivenValidResponse());
 
         var response = await _ordersHttpApi.Get();
@@ -45,8 +42,8 @@ public class OrdersHttpApiShould
         response.Match(
             orders =>
             {
-                orders.Count.Should().Be(1);
-                orders.First().Uuid.ToString().Should().Be("1858f59d-8884-41d7-b4fc-88cfbbf00c53");
+                orders.Value.Count.Should().Be(1);
+                orders.Value.First().Uuid.ToString().Should().Be("1858f59d-8884-41d7-b4fc-88cfbbf00c53");
             },
             error => error.Should().BeNull()
         );

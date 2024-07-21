@@ -13,8 +13,8 @@ public class OrdersService(
     {
         var result = await (
             from orders in ordersApi.Get().ToAsync()
-            from _ in ordersRepository.Save(orders).ToAsync()
-            from __ in filesRepository.Save(orders).ToAsync()
+            from _ in ordersRepository.Save(orders.Value).ToAsync()
+            from __ in filesRepository.Save(orders.Value).ToAsync()
             select Unit.Default
         ).ToEither();
 

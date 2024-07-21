@@ -1,13 +1,5 @@
 namespace EsPublico.Kata.Orders.Domain;
 
-public class Orders
-{
-    private Orders(List<OrderItems.Order> givenOrders, NextOrdersLink givenNextOrdersLink)
-    {
-        OrdersList = givenOrders;
-        NextOrdersLink = givenNextOrdersLink;
-    }
+public record Orders(List<OrderItems.Order> Value);
 
-    public List<OrderItems.Order> OrdersList { get; }
-    public NextOrdersLink NextOrdersLink { get; }
-}
+public record OrdersWithNextPage(List<OrderItems.Order> Value, NextOrdersLink NextOrdersLink) : Orders(Value);

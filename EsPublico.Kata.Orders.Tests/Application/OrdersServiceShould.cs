@@ -12,6 +12,7 @@ namespace EsPublico.Kata.Orders.Tests.Application;
 
 public class OrdersServiceShould
 {
+    // TODO: implement the next link usage
     private readonly FilesRepository _filesRepository;
     private readonly OrdersApi _ordersApi;
     private readonly OrdersRepository _ordersRepository;
@@ -28,16 +29,18 @@ public class OrdersServiceShould
     [Fact]
     public async Task IngestOrders()
     {
-        var orders = new List<Order> { new OrderBuilder().WithUuid("1858f59d-8884-41d7-b4fc-88cfbbf00c53").Build() };
+        var orders = new Orders.Domain.Orders([
+            new OrderBuilder().WithUuid("1858f59d-8884-41d7-b4fc-88cfbbf00c53").Build()
+        ]);
         _ordersApi.Get().Returns(orders);
-        _ordersRepository.Save(orders).Returns(Unit.Default);
-        _filesRepository.Save(orders).Returns(Unit.Default);
+        _ordersRepository.Save(orders.Value).Returns(Unit.Default);
+        _filesRepository.Save(orders.Value).Returns(Unit.Default);
 
         await _service.Ingest();
 
         await _ordersApi.Received(1).Get();
-        await _ordersRepository.Received(1).Save(orders);
-        await _filesRepository.Received(1).Save(orders);
+        await _ordersRepository.Received(1).Save(orders.Value);
+        await _filesRepository.Received(1).Save(orders.Value);
     }
 
     [Fact]
