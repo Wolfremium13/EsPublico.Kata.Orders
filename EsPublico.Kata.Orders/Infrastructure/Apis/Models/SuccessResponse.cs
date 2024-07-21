@@ -49,4 +49,6 @@ public class LinksResponse
     [JsonProperty("self")] public string Self { get; set; }
 
     [JsonProperty("next")] public string Next { get; set; }
+    
+    [JsonProperty("prev")] public string Prev { get; set; }
 }
