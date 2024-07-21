@@ -17,6 +17,8 @@ public class OrdersService(
     public async Task Ingest()
     {
         var executionDate = dateTimeGenerator.Now();
+        var counter = 0L;
+        logger.LogInformation($"Ingesting orders for {executionDate}");
         var maybeFirstOrders = await FirstOrdersCall(executionDate);
         if (maybeFirstOrders.IsLeft)
         {
@@ -25,7 +27,8 @@ public class OrdersService(
         }
 
         var orders = maybeFirstOrders.RightAsEnumerable().First();
-        logger.LogInformation($"Ingested {orders.Value.Count} orders");
+        counter += orders.Value.Count;
+        logger.LogInformation($"Ingested {counter} orders");
         while (orders is OrdersWithNextPage ordersWithNextPage)
         {
             var nextOrders = await NextOrdersCall(executionDate, ordersWithNextPage.NextOrdersLink);
@@ -37,7 +40,8 @@ public class OrdersService(
             }
 
             orders = nextOrders.RightAsEnumerable().First();
-            logger.LogInformation($"Ingested {orders.Value.Count} orders");
+            counter += orders.Value.Count;
+            logger.LogInformation($"Ingested {counter} orders");
         }
 
         logger.LogInformation("Ingestion finished");
