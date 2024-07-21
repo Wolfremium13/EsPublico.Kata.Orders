@@ -18,7 +18,7 @@ public class OrdersHttpApiShould : IDisposable
         _server = WireMockServer.Start();
         var apiSettings = new ApiSettings
         {
-            BaseUrl = _server.Url!
+            BaseUrl = $"{_server.Url}/v1/orders"
         };
         var httpClientFactory = new HttpClientFactory();
         _ordersHttpApi = new OrdersHttpApi(httpClientFactory, apiSettings);
@@ -27,15 +27,32 @@ public class OrdersHttpApiShould : IDisposable
     public void Dispose() => _server.Stop();
 
     [Fact]
-    public async Task GetOrders()
+    public async Task GetOrdersFromConfig()
     {
-        var pageNumber = PageNumber.Create(1).Match(
-            value => value,
-            _ => throw new Exception("Invalid PageNumber")
-        );
         GivenAnOkResponse();
 
-        var result = await _ordersHttpApi.Get(pageNumber);
+        var result = await _ordersHttpApi.Get();
+
+        result.Match(
+            orders =>
+            {
+                const int numberOfOrdersPerPage = 100;
+                orders.Count.Should().Be(numberOfOrdersPerPage);
+            },
+            error => error.Should().BeNull()
+        );
+    }
+
+    [Fact]
+    public async Task GetOrdersFromLink()
+    {
+        GivenAnOkResponse();
+        var nextOrdersLink = NextOrdersLink.Create($"{_server.Url}/v1/orders?page=2")
+            .Match(
+                link => link,
+                error => throw new Exception($"Error creating next orders link: {error.Message}")
+            );
+        var result = await _ordersHttpApi.Get(nextOrdersLink);
 
         result.Match(
             orders =>
@@ -53,8 +70,7 @@ public class OrdersHttpApiShould : IDisposable
         var okResponse = File.ReadAllText(okResponsePath);
         var requestMatcher = Request.Create()
             .WithHeader("Accept", "application/json")
-            .WithPath("/orders")
-            .WithParam("page", "1")
+            .WithPath("/v1/orders")
             .UsingGet();
         var responseBuilder = Response.Create().WithBody(okResponse);
         _server

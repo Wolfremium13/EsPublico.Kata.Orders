@@ -40,7 +40,7 @@ public class OrdersHttpApiShould
         );
         GivenHttpClientReturns(HttpStatusCode.OK, GivenValidResponse());
 
-        var response = await _ordersHttpApi.Get(pageNumber);
+        var response = await _ordersHttpApi.Get();
 
         response.Match(
             orders =>
@@ -61,7 +61,7 @@ public class OrdersHttpApiShould
         );
         GivenHttpClientThrowsException();
 
-        var unexpectedError = await _ordersHttpApi.Get(pageNumber);
+        var unexpectedError = await _ordersHttpApi.Get();
 
         unexpectedError.Match(
             orders => orders.Should().BeNull(),
@@ -78,7 +78,7 @@ public class OrdersHttpApiShould
         );
         GivenHttpClientReturns(HttpStatusCode.OK, null!);
 
-        var responseIsEmpty = await _ordersHttpApi.Get(pageNumber);
+        var responseIsEmpty = await _ordersHttpApi.Get();
 
         responseIsEmpty.Match(
             orders => orders.Should().BeNull(),
@@ -95,7 +95,7 @@ public class OrdersHttpApiShould
         );
         GivenHttpClientReturns(HttpStatusCode.BadRequest, null!);
 
-        var badRequest = await _ordersHttpApi.Get(pageNumber);
+        var badRequest = await _ordersHttpApi.Get();
 
         badRequest.Match(
             orders => orders.Should().BeNull(),

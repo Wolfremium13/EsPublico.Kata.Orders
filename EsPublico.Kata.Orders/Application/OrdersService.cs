@@ -1,4 +1,3 @@
-using EsPublico.Kata.Orders.Domain;
 using EsPublico.Kata.Orders.Infrastructure.Apis;
 using EsPublico.Kata.Orders.Infrastructure.Repositories;
 using LanguageExt;
@@ -10,10 +9,10 @@ public class OrdersService(
     FilesRepository filesRepository,
     OrdersApi ordersApi)
 {
-    public async Task Ingest(PageNumber pageNumber)
+    public async Task Ingest()
     {
         var result = await (
-            from orders in ordersApi.Get(pageNumber).ToAsync()
+            from orders in ordersApi.Get().ToAsync()
             from _ in ordersRepository.Save(orders).ToAsync()
             from __ in filesRepository.Save(orders).ToAsync()
             select Unit.Default
@@ -24,7 +23,7 @@ public class OrdersService(
             {
                 /* Success - do nothing */
             },
-            Left: error => throw new Exception($"Error ingesting orders in page {pageNumber}: {error.Message}")
+            Left: error => throw new Exception($"Error ingesting orders: {error.Message}")
         );
     }
 }

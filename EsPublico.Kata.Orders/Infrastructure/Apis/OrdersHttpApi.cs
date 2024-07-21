@@ -9,16 +9,17 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
 {
     public class OrdersHttpApi(IHttpClientFactory httpClientFactory, ApiSettings apiSettings) : OrdersApi
     {
-        public async Task<Either<Error, List<Order>>> Get(PageNumber pageNumber)
+        public async Task<Either<Error, List<Order>>> Get(NextOrdersLink nextOrdersLink)
         {
             try
             {
-                var response = await SendRequest(pageNumber);
+                var response = await SendRequest(nextOrdersLink);
                 if (!response.IsSuccessStatusCode)
                 {
                     return new Error($"Error getting orders: HTTP status code {response.StatusCode}" +
                                      $" - {response.ReasonPhrase}");
                 }
+
                 var successResponse = await MapToSuccessResponse(response);
                 return successResponse != null
                     ? MapResponseToOrders(successResponse.Content)
@@ -30,13 +31,44 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
             }
         }
 
-        private async Task<HttpResponseMessage> SendRequest(PageNumber pageNumber)
+        public async Task<Either<Error, List<Order>>> Get()
+        {
+            try
+            {
+                var response = await SendRequest();
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new Error($"Error getting orders: HTTP status code {response.StatusCode}" +
+                                     $" - {response.ReasonPhrase}");
+                }
+
+                var successResponse = await MapToSuccessResponse(response);
+                return successResponse != null
+                    ? MapResponseToOrders(successResponse.Content)
+                    : new Error("Success response is null");
+            }
+            catch (Exception e)
+            {
+                return new Error($"Error getting orders: {e.Message}");
+            }
+        }
+
+        private async Task<HttpResponseMessage> SendRequest(NextOrdersLink nextOrdersLink)
         {
             var client = httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Add("Accept", "application/json");
-            var response = await client.GetAsync($"{apiSettings.BaseUrl}/orders?page={pageNumber}");
+            var response = await client.GetAsync(nextOrdersLink.ToString());
             return response;
         }
+
+        private async Task<HttpResponseMessage> SendRequest()
+        {
+            var client = httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            var response = await client.GetAsync(apiSettings.BaseUrl);
+            return response;
+        }
+
 
         private static async Task<SuccessResponse?> MapToSuccessResponse(HttpResponseMessage response)
         {

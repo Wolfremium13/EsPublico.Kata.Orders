@@ -28,15 +28,14 @@ public class OrdersServiceShould
     [Fact]
     public async Task IngestOrders()
     {
-        var pageNumber = new PageNumberBuilder().WithValue(1).Build();
         var orders = new List<Order> { new OrderBuilder().WithUuid("1858f59d-8884-41d7-b4fc-88cfbbf00c53").Build() };
-        _ordersApi.Get(pageNumber).Returns(orders);
+        _ordersApi.Get().Returns(orders);
         _ordersRepository.Save(orders).Returns(Unit.Default);
         _filesRepository.Save(orders).Returns(Unit.Default);
 
-        await _service.Ingest(pageNumber);
+        await _service.Ingest();
 
-        await _ordersApi.Received(1).Get(pageNumber);
+        await _ordersApi.Received(1).Get();
         await _ordersRepository.Received(1).Save(orders);
         await _filesRepository.Received(1).Save(orders);
     }
@@ -44,13 +43,12 @@ public class OrdersServiceShould
     [Fact]
     public async Task StopIfErrorIngestingOrders()
     {
-        var pageNumber = new PageNumberBuilder().WithValue(2).Build();
         var error = new Error("Some error during ingestion");
-        _ordersApi.Get(pageNumber).Returns(error);
+        _ordersApi.Get().Returns(error);
 
-        var exception = await Record.ExceptionAsync(() => _service.Ingest(pageNumber));
+        var exception = await Record.ExceptionAsync(() => _service.Ingest());
 
         exception.Should().BeOfType<Exception>().Which.Message.Should()
-            .Be($"Error ingesting orders in page {pageNumber}: {error.Message}");
+            .Be($"Error ingesting orders: {error.Message}");
     }
 }
