@@ -5,7 +5,7 @@ namespace EsPublico.Kata.Orders.Infrastructure.Databases;
 
 public class PostgresAdapter(DatabaseSettings settings)
 {
-    private readonly string _connectionString = settings.ConnectionString;
+    private readonly string? _connectionString = settings.ConnectionString;
 
     public async Task<T> Get<T>(Func<NpgsqlCommand, Task<T>> func)
     {

@@ -8,12 +8,12 @@ using NSubstitute;
 
 namespace EsPublico.Kata.Orders.Tests.Infrastructure.Repositories;
 
-public class OrdersRepositoryShould : IDisposable
+public class PostgresOrdersRepositoryShould : IDisposable
 {
     private readonly PostgresAdapter _adapter;
     private readonly PostgresOrdersRepository _repository;
 
-    public OrdersRepositoryShould()
+    public PostgresOrdersRepositoryShould()
     {
         var databaseSettings = new DatabaseSettings
         {

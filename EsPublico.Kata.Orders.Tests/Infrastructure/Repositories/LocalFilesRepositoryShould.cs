@@ -1,4 +1,6 @@
+using EsPublico.Kata.Orders.Domain;
 using EsPublico.Kata.Orders.Domain.OrderItems;
+using EsPublico.Kata.Orders.Infrastructure.Generators;
 using EsPublico.Kata.Orders.Infrastructure.Repositories;
 using EsPublico.Kata.Orders.Tests.Domain.Builders;
 using FluentAssertions;
@@ -16,8 +18,11 @@ public class LocalFilesRepositoryShould : IDisposable
     public LocalFilesRepositoryShould()
     {
         var logger = Substitute.For<ILogger<LocalFilesRepository>>();
-        _repository = new LocalFilesRepository(logger);
-        _executionDate = DateTime.Now;
+        var dateTimeGenerator = Substitute.For<DateTimeGenerator>();
+        _repository = new LocalFilesRepository(dateTimeGenerator, logger);
+        var currentExecutionDate = DateTime.Now;
+        dateTimeGenerator.Now().Returns(currentExecutionDate);
+        _executionDate = currentExecutionDate;
         _folderPath = Path.Combine(Path.GetTempPath(), $"kata-orders-{_executionDate:yyyy-MM-ddTHH-mm-ss}");
     }
 
@@ -30,7 +35,7 @@ public class LocalFilesRepositoryShould : IDisposable
     }
 
     [Fact]
-    public async Task Save()
+    public async Task SaveOrders()
     {
         var aOrder = new OrderBuilder().WithUuid("1858f59d-8884-41d7-b4fc-88cfbbf00c53").Build();
         var orders = new List<Order> { aOrder };
@@ -66,6 +71,27 @@ public class LocalFilesRepositoryShould : IDisposable
                 fileContent.Should().Contain(anotherOrder.Uuid.ToString());
             },
             error => throw new Exception($"Error saving orders: {error.Message}")
+        );
+    }
+
+    [Fact]
+    public async Task SaveSummaryRecords()
+    {
+        var summaryRecords = new List<SummaryRecord>
+        {
+            new("aCategory", "aType", 1),
+            new("aCategory", "anotherType", 2)
+        };
+
+        var saveResult = await _repository.Save(summaryRecords);
+
+        saveResult.Match(
+            _ =>
+            {
+                var files = Directory.GetFiles(_folderPath, "orders_summary_*.csv");
+                files.Should().HaveCount(1);
+            },
+            error => error.Should().BeNull()
         );
     }
 }

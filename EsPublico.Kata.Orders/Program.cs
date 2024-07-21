@@ -17,6 +17,8 @@ var databaseSettings = new DatabaseSettings();
 configuration.GetSection("DatabaseSettings").Bind(databaseSettings);
 var apiSettings = new ApiSettings();
 configuration.GetSection("ApiSettings").Bind(apiSettings);
+var programSettings = new ProgramSettings();
+configuration.GetSection("ProgramSettings").Bind(programSettings);
 
 // Logging
 var loggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
@@ -28,18 +30,35 @@ logger.LogInformation("Application starting...");
 var postgresAdapter = new PostgresAdapter(databaseSettings);
 var ordersRepository =
     new PostgresOrdersRepository(postgresAdapter, loggerFactory.CreateLogger<PostgresOrdersRepository>());
-var localFileSystemRepository = new LocalFilesRepository(loggerFactory.CreateLogger<LocalFilesRepository>());
+var dateTimeGenerator = new DateTimeGenerator();
+var localFileSystemRepository = new LocalFilesRepository(
+    dateTimeGenerator,
+    loggerFactory.CreateLogger<LocalFilesRepository>());
 var httpClientsFactory = new HttpClientFactory();
 var apiOrders = new OrdersHttpApi(httpClientsFactory, apiSettings, loggerFactory.CreateLogger<OrdersHttpApi>());
-var dateTimeGenerator = new DateTimeGenerator();
 var ordersService = new OrdersService(
     ordersRepository,
     localFileSystemRepository,
     apiOrders,
     dateTimeGenerator,
     loggerFactory.CreateLogger<OrdersService>());
+var summaryRepository = new PostgresSummaryRepository(
+    postgresAdapter);
+var summaryService = new SummaryService(
+    summaryRepository,
+    localFileSystemRepository,
+    loggerFactory.CreateLogger<SummaryService>());
 
 // Application
 logger.LogInformation("Application started.");
-await ordersService.Ingest();
+if (programSettings.Ingest == true)
+{
+    await ordersService.Ingest();
+}
+
+if (programSettings.Summary == true)
+{
+    await summaryService.Summary();
+}
+
 logger.LogInformation("Application finished.");
