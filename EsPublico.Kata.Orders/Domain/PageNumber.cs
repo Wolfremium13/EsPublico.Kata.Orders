@@ -5,7 +5,7 @@ namespace EsPublico.Kata.Orders.Domain;
 public class PageNumber
 {
     private PageNumber(int givenPageNumber) => Value = givenPageNumber;
-    public int Value { get; }
+    private int Value { get; }
 
 
     public static Either<Error, PageNumber> Create(int givenPageNumber)
