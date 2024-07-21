@@ -11,31 +11,19 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
     {
         public async Task<Either<Error, List<Order>>> Get(NextOrdersLink nextOrdersLink)
         {
-            try
-            {
-                var response = await SendRequest(nextOrdersLink);
-                if (!response.IsSuccessStatusCode)
-                {
-                    return new Error($"Error getting orders: HTTP status code {response.StatusCode}" +
-                                     $" - {response.ReasonPhrase}");
-                }
-
-                var successResponse = await MapToSuccessResponse(response);
-                return successResponse != null
-                    ? MapResponseToOrders(successResponse.Content)
-                    : new Error("Success response is null");
-            }
-            catch (Exception e)
-            {
-                return new Error($"Error getting orders: {e.Message}");
-            }
+            return await GetOrders(() => SendRequest(nextOrdersLink));
         }
 
         public async Task<Either<Error, List<Order>>> Get()
         {
+            return await GetOrders(SendRequest);
+        }
+
+        private async Task<Either<Error, List<Order>>> GetOrders(Func<Task<HttpResponseMessage>> sendRequestFunc)
+        {
             try
             {
-                var response = await SendRequest();
+                var response = await sendRequestFunc();
                 if (!response.IsSuccessStatusCode)
                 {
                     return new Error($"Error getting orders: HTTP status code {response.StatusCode}" +
