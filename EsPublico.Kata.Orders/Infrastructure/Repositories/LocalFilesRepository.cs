@@ -33,22 +33,24 @@ public class LocalFilesRepository(
                         "unit_cost,total_revenue,total_cost,total_profit");
                 }
 
-                foreach (var csvLine in orders.Select(order => string.Join(",",
-                             order.Uuid.ToString(),
-                             order.Id.Value,
-                             order.Region.ToString(),
-                             order.Country.ToString(),
-                             order.ItemType.ToString(),
-                             order.SalesChannel.ToString(),
-                             order.Priority.ToString(),
-                             order.Date.ToString(),
-                             order.ShipDate.ToString(),
-                             order.UnitsSold.Value,
-                             order.UnitPrice.Value,
-                             order.UnitCost.Value,
-                             order.TotalRevenue.Value,
-                             order.TotalCost.Value,
-                             order.TotalProfit.Value)))
+                foreach (var csvLine in orders
+                             .OrderByDescending(order => order.Id.Value)
+                             .Select(order => string.Join(",",
+                                 order.Uuid.ToString(),
+                                 order.Id.Value,
+                                 order.Region.ToString(),
+                                 order.Country.ToString(),
+                                 order.ItemType.ToString(),
+                                 order.SalesChannel.ToString(),
+                                 order.Priority.ToString(),
+                                 order.Date.ToString(),
+                                 order.ShipDate.ToString(),
+                                 order.UnitsSold.Value,
+                                 order.UnitPrice.Value,
+                                 order.UnitCost.Value,
+                                 order.TotalRevenue.Value,
+                                 order.TotalCost.Value,
+                                 order.TotalProfit.Value)))
                 {
                     await writer.WriteLineAsync(csvLine);
                 }
