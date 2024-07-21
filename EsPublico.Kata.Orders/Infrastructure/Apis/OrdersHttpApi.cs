@@ -32,15 +32,13 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
                 }
 
                 var successResponse = await MapToSuccessResponse(response);
-
                 if (successResponse == null)
                 {
                     return new Error("Success response is null");
                 }
 
                 var orders = MapResponseToOrders(successResponse.Content);
-                var nextOrdersLink = NextOrdersLink.Create(successResponse.LinksResponse?.Next);
-
+                var nextOrdersLink = NextOrdersLink.Create(successResponse.LinksResponse.Next);
                 return orders.Match<Either<Error, Domain.Orders>>(
                     ord => nextOrdersLink.Match<Either<Error, Domain.Orders>>(
                         Right: nextLink => new OrdersWithNextPage(ord, nextLink),
@@ -75,10 +73,8 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
         private static async Task<SuccessResponse?> MapToSuccessResponse(HttpResponseMessage response)
         {
             var stream = await response.Content.ReadAsStreamAsync();
-            using var reader = new StreamReader(stream);
-            using var jsonReader = new JsonTextReader(reader);
-            var serializer = new JsonSerializer();
-            var successResponse = serializer.Deserialize<SuccessResponse>(jsonReader);
+            using var jsonReader = new JsonTextReader(new StreamReader(stream));
+            var successResponse = new JsonSerializer().Deserialize<SuccessResponse>(jsonReader);
             return successResponse;
         }
 

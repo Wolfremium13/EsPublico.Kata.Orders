@@ -52,10 +52,6 @@ public class OrdersHttpApiShould
     [Fact]
     public async Task HandleUnexpectedErrors()
     {
-        var pageNumber = PageNumber.Create(1).Match(
-            value => value,
-            _ => throw new Exception("Invalid PageNumber")
-        );
         GivenHttpClientThrowsException();
 
         var unexpectedError = await _ordersHttpApi.Get();
@@ -69,10 +65,6 @@ public class OrdersHttpApiShould
     [Fact]
     public async Task HandleWhenSuccessResponseIsNull()
     {
-        var pageNumber = PageNumber.Create(1).Match(
-            value => value,
-            _ => throw new Exception("Invalid PageNumber")
-        );
         GivenHttpClientReturns(HttpStatusCode.OK, null!);
 
         var responseIsEmpty = await _ordersHttpApi.Get();
@@ -86,10 +78,6 @@ public class OrdersHttpApiShould
     [Fact]
     public async Task HandleWhenResponseIsNotSuccessful()
     {
-        var pageNumber = PageNumber.Create(1).Match(
-            value => value,
-            _ => throw new Exception("Invalid PageNumber")
-        );
         GivenHttpClientReturns(HttpStatusCode.BadRequest, null!);
 
         var badRequest = await _ordersHttpApi.Get();
