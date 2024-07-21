@@ -13,21 +13,13 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
         {
             try
             {
-                var client = httpClientFactory.CreateClient();
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
-                var response = await client.GetAsync($"{apiSettings.BaseUrl}/orders?page={pageNumber}");
+                var response = await SendRequest(pageNumber);
                 if (!response.IsSuccessStatusCode)
                 {
                     return new Error($"Error getting orders: HTTP status code {response.StatusCode}" +
                                      $" - {response.ReasonPhrase}");
                 }
-
-                var stream = await response.Content.ReadAsStreamAsync();
-                using var reader = new StreamReader(stream);
-                using var jsonReader = new JsonTextReader(reader);
-                var serializer = new JsonSerializer();
-                var successResponse = serializer.Deserialize<SuccessResponse>(jsonReader);
-
+                var successResponse = await MapToSuccessResponse(response);
                 return successResponse != null
                     ? MapResponseToOrders(successResponse.Content)
                     : new Error("Success response is null");
@@ -36,6 +28,24 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
             {
                 return new Error($"Error getting orders: {e.Message}");
             }
+        }
+
+        private async Task<HttpResponseMessage> SendRequest(PageNumber pageNumber)
+        {
+            var client = httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+            var response = await client.GetAsync($"{apiSettings.BaseUrl}/orders?page={pageNumber}");
+            return response;
+        }
+
+        private static async Task<SuccessResponse?> MapToSuccessResponse(HttpResponseMessage response)
+        {
+            var stream = await response.Content.ReadAsStreamAsync();
+            using var reader = new StreamReader(stream);
+            using var jsonReader = new JsonTextReader(reader);
+            var serializer = new JsonSerializer();
+            var successResponse = serializer.Deserialize<SuccessResponse>(jsonReader);
+            return successResponse;
         }
 
         private static Either<Error, List<Order>> MapResponseToOrders(List<OrderResponse> orderResponses)
