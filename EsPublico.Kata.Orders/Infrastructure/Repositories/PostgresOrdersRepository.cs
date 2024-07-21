@@ -77,8 +77,8 @@ public class PostgresOrdersRepository(
         }
 
         sql.Append(
-            " ON CONFLICT (uuid) DO UPDATE SET " +
-            "order_id = EXCLUDED.order_id, " +
+            " ON CONFLICT (order_id) DO UPDATE SET " +
+            "uuid = EXCLUDED.uuid, " +
             "region = EXCLUDED.region, " +
             "country = EXCLUDED.country, " +
             "item_type = EXCLUDED.item_type, " +

@@ -4,6 +4,7 @@ namespace EsPublico.Kata.Orders.Tests.Domain.Builders;
 
 public class OrderBuilder
 {
+    private long _id = 1;
     private string? _uuid = "1858f59d-8884-41d7-b4fc-88cfbbf00c53";
 
     public OrderBuilder WithUuid(string? givenUuid)
@@ -12,11 +13,17 @@ public class OrderBuilder
         return this;
     }
 
+    public OrderBuilder WithId(long id)
+    {
+        _id = id;
+        return this;
+    }
+
     public Order Build()
     {
         return Order.Create(
             uuid: _uuid,
-            id: 1,
+            id: _id,
             region: "Europe",
             country: "Portugal",
             itemType: "Technology",

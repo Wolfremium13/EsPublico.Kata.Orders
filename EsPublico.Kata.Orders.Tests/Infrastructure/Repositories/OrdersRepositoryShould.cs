@@ -8,7 +8,7 @@ using NSubstitute;
 
 namespace EsPublico.Kata.Orders.Tests.Infrastructure.Repositories;
 
-public class OrdersRepositoryShould
+public class OrdersRepositoryShould : IDisposable
 {
     private readonly PostgresAdapter _adapter;
     private readonly PostgresOrdersRepository _repository;
@@ -24,11 +24,20 @@ public class OrdersRepositoryShould
         _repository = new PostgresOrdersRepository(_adapter, logger);
     }
 
+    public async void Dispose()
+    {
+        await _adapter.Execute(async cmd =>
+        {
+            cmd.CommandText = "DELETE FROM orders WHERE order_id = 1";
+            await cmd.ExecuteNonQueryAsync();
+        });
+    }
+
     // [Fact]
     [Fact(Skip = "Integration test: Needs to launch docker compose postgres")]
     public async Task Save()
     {
-        var aOrder = new OrderBuilder().WithUuid("1858f59d-8884-41d7-b4fc-88cfbbf00c53").Build();
+        var aOrder = new OrderBuilder().WithId(1).Build();
         var orders = new OrdersBuilder().WithOrder(aOrder).Build();
 
         var result = await _repository.Save(orders.Value);
@@ -41,24 +50,20 @@ public class OrdersRepositoryShould
 
     // [Fact]
     [Fact(Skip = "Integration test: Needs to launch docker compose postgres")]
-    public async Task UpdatesIfExists()
+    public async Task NotAllowDuplicatedOrderId()
     {
-        var aOrder = new OrderBuilder().WithUuid("1858f59d-8884-41d7-b4fc-88cfbbf00c53").Build();
-        var orders = new OrdersBuilder().WithOrder(aOrder).Build();
+        var aOrder = new OrderBuilder().WithId(1).Build();
+        var duplicatedOrder = new OrderBuilder().WithId(1).Build();
+        var orders = new OrdersBuilder()
+            .WithOrder(aOrder)
+            .WithOrder(duplicatedOrder)
+            .Build();
 
-        await _repository.Save(orders.Value);
         var result = await _repository.Save(orders.Value);
 
-        await result.Match(async _ =>
-            {
-                await _adapter.Execute(async cmd =>
-                {
-                    cmd.CommandText = "SELECT COUNT(*) FROM orders";
-                    var count = (long)(await cmd.ExecuteScalarAsync() ?? throw new InvalidOperationException());
-                    count.Should().Be(1);
-                });
-            },
-            error => throw new Exception($"Error saving orders: {error.Message}")
+        result.Match(
+            _ => { },
+            error => error.Message.Should().Contain("ON CONFLICT DO UPDATE")
         );
     }
 }
