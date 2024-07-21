@@ -7,5 +7,5 @@ public interface IHttpClientFactory
 
 public class HttpClientFactory : IHttpClientFactory
 {
-    public HttpClient CreateClient() => new HttpClient();
+    public HttpClient CreateClient() => new();
 }
