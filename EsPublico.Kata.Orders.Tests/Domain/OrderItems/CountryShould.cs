@@ -9,7 +9,7 @@ public class CountryShould
     [Fact]
     public void BeCreated()
     {
-        const string aCountry = "Spain";
+        const string? aCountry = "Spain";
         var validCountry = Country.Create(aCountry);
 
         validCountry.Match(

@@ -35,7 +35,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="Infrastructure\Apis\Integration\Resources\ok_response.json">
+        <None Update="Infrastructure\Apis\Integration\Resources\ok_first_response.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Infrastructure\Apis\Integration\Resources\ok_next_response.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
     </ItemGroup>

@@ -14,7 +14,6 @@ namespace EsPublico.Kata.Orders.Tests.Infrastructure.Apis.Unit;
 
 public class OrdersHttpApiShould
 {
-    // TODO: hay que hacer el next link
     private const string BaseUrl = "http://localhost:5000";
 
     private readonly ApiSettings _apiSettings = new()
@@ -33,9 +32,9 @@ public class OrdersHttpApiShould
     }
 
     [Fact]
-    public async Task GetOrders()
+    public async Task GetFirstOrders()
     {
-        GivenHttpClientReturns(HttpStatusCode.OK, GivenValidResponse());
+        GivenHttpClientReturns(HttpStatusCode.OK, GivenValidFirstOrdersResponse());
 
         var response = await _ordersHttpApi.Get();
 
@@ -48,6 +47,30 @@ public class OrdersHttpApiShould
             error => error.Should().BeNull()
         );
     }
+
+    [Fact]
+    public async Task GetNextOrders()
+    {
+        var nextOrdersLink = NextOrdersLink.Create("http://example.com/orders?page=2").Match(
+            link => link,
+            _ => throw new Exception("Next link is null")
+        );
+        GivenHttpClientReturns(HttpStatusCode.OK, GivenValidNextOrdersResponse());
+
+        var response = await _ordersHttpApi.Get(nextOrdersLink);
+
+        response.Match(
+            orders =>
+            {
+                orders.Value.Count.Should().Be(1);
+                orders.Value.First().Uuid.ToString().Should().Be("1858f59d-8884-41d7-b4fc-88cfbbf00c53");
+                orders.Should().BeOfType<OrdersWithNextPage>()
+                    .Which.NextOrdersLink.ToString().Should().Be(nextOrdersLink.ToString());
+            },
+            error => error.Should().BeNull()
+        );
+    }
+
 
     [Fact]
     public async Task HandleUnexpectedErrors()
@@ -88,7 +111,7 @@ public class OrdersHttpApiShould
         );
     }
 
-    private static SuccessResponse GivenValidResponse()
+    private static SuccessResponse GivenValidFirstOrdersResponse()
     {
         List<OrderResponse> orderResponses =
         [
@@ -114,6 +137,42 @@ public class OrdersHttpApiShould
         return new SuccessResponse
         {
             Content = orderResponses
+        };
+    }
+
+    private static SuccessResponse GivenValidNextOrdersResponse()
+    {
+        List<OrderResponse> orderResponses =
+        [
+            new OrderResponse
+            {
+                Uuid = "1858f59d-8884-41d7-b4fc-88cfbbf00c53",
+                Id = 1,
+                Region = "Region",
+                Country = "Country",
+                ItemType = "ItemType",
+                SalesChannel = "SalesChannel",
+                Priority = "H",
+                Date = "7/27/2012",
+                ShipDate = "7/27/2012",
+                UnitsSold = 1,
+                UnitPrice = 1,
+                UnitCost = 1,
+                TotalRevenue = 1,
+                TotalCost = 1,
+                TotalProfit = 1
+            }
+        ];
+
+        var linksResponse = new LinksResponse
+        {
+            Next = "http://example.com/orders?page=2"
+        };
+
+        return new SuccessResponse
+        {
+            Content = orderResponses,
+            LinksResponse = linksResponse
         };
     }
 

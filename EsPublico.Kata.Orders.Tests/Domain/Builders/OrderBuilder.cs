@@ -4,9 +4,9 @@ namespace EsPublico.Kata.Orders.Tests.Domain.Builders;
 
 public class OrderBuilder
 {
-    private string _uuid = "1858f59d-8884-41d7-b4fc-88cfbbf00c53";
+    private string? _uuid = "1858f59d-8884-41d7-b4fc-88cfbbf00c53";
 
-    public OrderBuilder WithUuid(string givenUuid)
+    public OrderBuilder WithUuid(string? givenUuid)
     {
         _uuid = givenUuid;
         return this;

@@ -9,7 +9,7 @@ public class RegionShould
     [Fact]
     public void BeCreated()
     {
-        const string aRegion = "Europe";
+        const string? aRegion = "Europe";
         var validRegion = Region.Create(aRegion);
 
         validRegion.Match(

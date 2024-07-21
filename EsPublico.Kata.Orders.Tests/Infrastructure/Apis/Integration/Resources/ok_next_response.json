@@ -2003,7 +2003,6 @@
     }
   ],
   "links": {
-    "next": "https://kata-espublicotech.g3stiona.com:443/v1/orders?page=2&max-per-page=100",
     "self": "https://kata-espublicotech.g3stiona.com:443/v1/orders?page=1&max-per-page=100"
   }
 }

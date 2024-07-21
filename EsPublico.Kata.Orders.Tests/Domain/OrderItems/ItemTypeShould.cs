@@ -9,7 +9,7 @@ public class ItemTypeShould
     [Fact]
     public void BeCreated()
     {
-        const string anItemType = "a-type";
+        const string? anItemType = "a-type";
         var validItemType = ItemType.Create(anItemType);
 
         validItemType.Match(

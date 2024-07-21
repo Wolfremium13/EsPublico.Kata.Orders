@@ -4,10 +4,10 @@ namespace EsPublico.Kata.Orders.Domain.OrderItems;
 
 public class Priority
 {
-    private readonly string _value;
-    private Priority(string givenPriority) => _value = givenPriority;
+    private readonly string? _value;
+    private Priority(string? givenPriority) => _value = givenPriority;
 
-    public static Either<Error, Priority> Create(string givenPriority)
+    public static Either<Error, Priority> Create(string? givenPriority)
     {
         if (string.IsNullOrWhiteSpace(givenPriority))
         {
@@ -23,9 +23,9 @@ public class Priority
             $"Invalid Priority: {givenPriority}, expected one of {string.Join(", ", AllowedPriorities())}");
     }
 
-    public override string ToString() => _value;
+    public override string? ToString() => _value;
 
-    private static bool IsPriorityAllowed(string givenPriority) =>
+    private static bool IsPriorityAllowed(string? givenPriority) =>
         AllowedPriorities().Any(allowedPriority => allowedPriority == givenPriority);
 
     private static List<string> AllowedPriorities() => ["C", "H", "M", "L"];

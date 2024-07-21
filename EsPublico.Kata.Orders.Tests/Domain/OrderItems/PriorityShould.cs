@@ -11,7 +11,7 @@ public class PriorityShould
     [InlineData("H")]
     [InlineData("M")]
     [InlineData("L")]
-    public void BeCreatedForCertainValues(string aValidPriority)
+    public void BeCreatedForCertainValues(string? aValidPriority)
     {
         var validPriority = Priority.Create(aValidPriority);
 

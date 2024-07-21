@@ -9,7 +9,7 @@ public class DateShould
     [Fact]
     public void BeCreated()
     {
-        const string aDate = "7/27/2012";
+        const string? aDate = "7/27/2012";
         var validDate = Date.Create(aDate);
 
         validDate.Match(

@@ -4,10 +4,10 @@ namespace EsPublico.Kata.Orders.Domain;
 
 public class NextOrdersLink
 {
-    private NextOrdersLink(string givenNextOrdersLink) => Value = givenNextOrdersLink;
-    private string Value { get; }
+    private NextOrdersLink(string? givenNextOrdersLink) => Value = givenNextOrdersLink;
+    private string? Value { get; }
 
-    public static Either<Error, NextOrdersLink> Create(string givenNextOrdersLink)
+    public static Either<Error, NextOrdersLink> Create(string? givenNextOrdersLink)
     {
         if (string.IsNullOrWhiteSpace(givenNextOrdersLink))
         {
@@ -22,5 +22,5 @@ public class NextOrdersLink
         return new NextOrdersLink(givenNextOrdersLink);
     }
 
-    public override string ToString() => Value;
+    public override string? ToString() => Value;
 }

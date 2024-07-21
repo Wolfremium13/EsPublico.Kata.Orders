@@ -7,7 +7,7 @@ public class ShipDate
     private readonly DateTime _value;
     private ShipDate(DateTime givenDate) => _value = givenDate;
 
-    public static Either<Error, ShipDate> Create(string givenDate)
+    public static Either<Error, ShipDate> Create(string? givenDate)
     {
         if (!DateTime.TryParse(givenDate, out var date))
         {

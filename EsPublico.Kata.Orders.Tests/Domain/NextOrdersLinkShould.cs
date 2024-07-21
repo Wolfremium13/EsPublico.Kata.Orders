@@ -8,7 +8,7 @@ public class NextOrdersLinkShould
     [Fact]
     public void BeCreated()
     {
-        const string aNextOrdersLink = "https://api.espublico.com/orders?page=2";
+        const string? aNextOrdersLink = "https://api.espublico.com/orders?page=2";
         var validNextOrdersLink = NextOrdersLink.Create(aNextOrdersLink);
 
         validNextOrdersLink.Match(

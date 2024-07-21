@@ -9,7 +9,7 @@ public class SalesChannelShould
     [Fact]
     public void BeCreated()
     {
-        const string aSalesChannel = "a-sales-channel";
+        const string? aSalesChannel = "a-sales-channel";
         var validSalesChannel = SalesChannel.Create(aSalesChannel);
 
         validSalesChannel.Match(

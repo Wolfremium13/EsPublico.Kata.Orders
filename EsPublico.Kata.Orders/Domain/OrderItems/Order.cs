@@ -58,15 +58,15 @@ public class Order
 
 
     public static Either<Error, Order> Create(
-        string uuid,
+        string? uuid,
         long id,
-        string region,
-        string country,
-        string itemType,
-        string salesChannel,
-        string priority,
-        string date,
-        string shipDate,
+        string? region,
+        string? country,
+        string? itemType,
+        string? salesChannel,
+        string? priority,
+        string? date,
+        string? shipDate,
         long unitsSold,
         decimal unitPrice,
         decimal unitCost,

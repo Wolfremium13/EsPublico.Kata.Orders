@@ -4,10 +4,10 @@ namespace EsPublico.Kata.Orders.Domain.OrderItems;
 
 public class ItemType
 {
-    private readonly string _value;
-    private ItemType(string givenType) => _value = givenType;
+    private readonly string? _value;
+    private ItemType(string? givenType) => _value = givenType;
 
-    public static Either<Error, ItemType> Create(string givenType)
+    public static Either<Error, ItemType> Create(string? givenType)
     {
         if (string.IsNullOrWhiteSpace(givenType))
         {
@@ -17,5 +17,5 @@ public class ItemType
         return new ItemType(givenType);
     }
 
-    public override string ToString() => _value;
+    public override string? ToString() => _value;
 }

@@ -7,13 +7,13 @@ namespace EsPublico.Kata.Orders.Tests.Domain.OrderItems;
 public class OrderShould
 {
     private const long ValidId = 443368995;
-    private const string ValidRegion = "Sub-Saharan Africa";
-    private const string ValidCountry = "South Africa";
-    private const string ValidItemType = "Fruits";
-    private const string ValidSalesChannel = "Offline";
-    private const string ValidPriority = "M";
-    private const string ValidDate = "7/27/2012";
-    private const string ValidShipDate = "7/28/2012";
+    private const string? ValidRegion = "Sub-Saharan Africa";
+    private const string? ValidCountry = "South Africa";
+    private const string? ValidItemType = "Fruits";
+    private const string? ValidSalesChannel = "Offline";
+    private const string? ValidPriority = "M";
+    private const string? ValidDate = "7/27/2012";
+    private const string? ValidShipDate = "7/28/2012";
     private const long ValidUnitsSold = 1593;
     private const decimal ValidUnitPrice = 9.33m;
     private const decimal ValidUnitCost = 6.92m;
@@ -24,7 +24,7 @@ public class OrderShould
     [Fact]
     public void BeCreated()
     {
-        const string invalidUuid = "invalid-uuid";
+        const string? invalidUuid = "invalid-uuid";
 
         var invalidOrder = Order.Create(
             invalidUuid,
@@ -54,7 +54,7 @@ public class OrderShould
     [Fact]
     public void NotAllowWrongAnyWrongParameter()
     {
-        const string validUuid = "1858f59d-8884-41d7-b4fc-88cfbbf00c53";
+        const string? validUuid = "1858f59d-8884-41d7-b4fc-88cfbbf00c53";
 
         var validOrder = Order.Create(
             validUuid,

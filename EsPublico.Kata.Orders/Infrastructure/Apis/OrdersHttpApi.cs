@@ -32,25 +32,35 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
                 }
 
                 var successResponse = await MapToSuccessResponse(response);
-                if (successResponse == null)
-                {
-                    return new Error("Success response is null");
-                }
-
-                var orders = MapResponseToOrders(successResponse.Content);
-                var nextOrdersLink = NextOrdersLink.Create(successResponse.LinksResponse.Next);
-                return orders.Match<Either<Error, Domain.Orders>>(
-                    ord => nextOrdersLink.Match<Either<Error, Domain.Orders>>(
-                        Right: nextLink => new OrdersWithNextPage(ord, nextLink),
-                        Left: _ => new Domain.Orders(ord)
-                    ),
-                    error => new Error(error.Message)
-                );
+                return successResponse == null
+                    ? new Error("Success response is null")
+                    : HandleOrdersCreation(successResponse);
             }
             catch (Exception e)
             {
                 return new Error($"Error getting orders: {e.Message}");
             }
+        }
+
+        private static Either<Error, Domain.Orders> HandleOrdersCreation(SuccessResponse successResponse)
+        {
+            var orders = MapResponseToOrders(successResponse.Content);
+            if (orders.IsLeft)
+            {
+                return new Error(orders.LeftAsEnumerable().First().Message);
+            }
+
+            var isMissingNextLink = successResponse.LinksResponse is null
+                                    || string.IsNullOrEmpty(successResponse.LinksResponse.Next);
+            if (isMissingNextLink)
+            {
+                return new Domain.Orders(orders.RightAsEnumerable().First());
+            }
+
+            return NextOrdersLink.Create(successResponse.LinksResponse?.Next).Match(
+                nextLink => new OrdersWithNextPage(orders.RightAsEnumerable().First(), nextLink),
+                _ => new Domain.Orders(orders.RightAsEnumerable().First())
+            );
         }
 
         private async Task<HttpResponseMessage> SendRequest(NextOrdersLink nextOrdersLink)
@@ -78,8 +88,13 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
             return successResponse;
         }
 
-        private static Either<Error, List<Order>> MapResponseToOrders(List<OrderResponse> orderResponses)
+        private static Either<Error, List<Order>> MapResponseToOrders(List<OrderResponse>? orderResponses)
         {
+            if (orderResponses is null)
+            {
+                return new Error("Orders response is null");
+            }
+
             var maybeOrders = orderResponses.Select(orderResponse => Order.Create(
                 uuid: orderResponse.Uuid,
                 id: orderResponse.Id,
@@ -97,7 +112,6 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
                 totalCost: orderResponse.TotalCost,
                 totalProfit: orderResponse.TotalProfit
             )).ToList();
-
             var errors = maybeOrders
                 .Where(maybeOrder => maybeOrder.IsLeft)
                 .SelectMany(maybeOrder => maybeOrder.LeftToSeq())

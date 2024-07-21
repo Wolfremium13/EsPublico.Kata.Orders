@@ -10,13 +10,13 @@ namespace EsPublico.Kata.Orders.Tests.Infrastructure.Apis.Integration;
 
 public class OrdersHttpApiShould : IDisposable
 {
-    // TODO: hay que hacer el next link
     private readonly OrdersHttpApi _ordersHttpApi;
     private readonly WireMockServer _server;
 
     public OrdersHttpApiShould()
     {
-        _server = WireMockServer.Start();
+        const int port = 3000;
+        _server = WireMockServer.Start(port);
         var apiSettings = new ApiSettings
         {
             BaseUrl = $"{_server.Url}/v1/orders"
@@ -30,7 +30,7 @@ public class OrdersHttpApiShould : IDisposable
     [Fact]
     public async Task GetOrdersFromConfig()
     {
-        GivenAnOkResponse();
+        GivenAOkResponseWithNextPage();
 
         var result = await _ordersHttpApi.Get();
 
@@ -39,6 +39,8 @@ public class OrdersHttpApiShould : IDisposable
             {
                 const int numberOfOrdersPerPage = 100;
                 orders.Value.Count.Should().Be(numberOfOrdersPerPage);
+                orders.Should().BeOfType<OrdersWithNextPage>()
+                    .Which.NextOrdersLink.ToString().Should().Be($"{_server.Url}/v1/orders?page=2&max-per-page=100");
             },
             error => error.Should().BeNull()
         );
@@ -47,7 +49,7 @@ public class OrdersHttpApiShould : IDisposable
     [Fact]
     public async Task GetOrdersFromLink()
     {
-        GivenAnOkResponse();
+        GivenAnOkResponseWithoutNextPage();
         var nextOrdersLink = NextOrdersLink.Create($"{_server.Url}/v1/orders?page=2")
             .Match(
                 link => link,
@@ -60,22 +62,39 @@ public class OrdersHttpApiShould : IDisposable
             {
                 const int numberOfOrdersPerPage = 100;
                 orders.Value.Count.Should().Be(numberOfOrdersPerPage);
+                orders.Should().BeOfType<Orders.Domain.Orders>();
             },
             error => error.Should().BeNull()
         );
     }
 
-    private void GivenAnOkResponse()
+    private void GivenAnOkResponseWithoutNextPage()
     {
-        var okResponsePath = Path.Combine("Infrastructure", "Apis", "Integration", "Resources", "ok_response.json");
-        var okResponse = File.ReadAllText(okResponsePath);
-        var requestMatcher = Request.Create()
+        var requestNextOrdersMatcher = Request.Create()
             .WithHeader("Accept", "application/json")
-            .WithPath("/v1/orders")
+            .WithUrl($"{_server.Url}/v1/orders?page=2")
             .UsingGet();
-        var responseBuilder = Response.Create().WithBody(okResponse);
+        var nextOrdersResponsePath =
+            Path.Combine("Infrastructure", "Apis", "Integration", "Resources", "ok_next_response.json");
+        var okResponse = File.ReadAllText(nextOrdersResponsePath);
+        var responseNextOrdersWithoutNextPage = Response.Create().WithBody(okResponse);
         _server
-            .Given(requestMatcher)
-            .RespondWith(responseBuilder);
+            .Given(requestNextOrdersMatcher)
+            .RespondWith(responseNextOrdersWithoutNextPage);
+    }
+
+    private void GivenAOkResponseWithNextPage()
+    {
+        var okResponsePath =
+            Path.Combine("Infrastructure", "Apis", "Integration", "Resources", "ok_first_response.json");
+        var okResponse = File.ReadAllText(okResponsePath);
+        var requestFirstOrdersMatcher = Request.Create()
+            .WithHeader("Accept", "application/json")
+            .WithUrl($"{_server.Url}/v1/orders")
+            .UsingGet();
+        var responseFirstOrdersWithNextPage = Response.Create().WithBody(okResponse);
+        _server
+            .Given(requestFirstOrdersMatcher)
+            .RespondWith(responseFirstOrdersWithNextPage);
     }
 }
