@@ -43,7 +43,8 @@ public class PostgresOrdersRepository(
         var parameters = new List<NpgsqlParameter>();
 
         sql.Append(
-            "INSERT INTO orders (uuid, id, region, country, item_type, sales_channel, priority, date, ship_date, units_sold, unit_price, unit_cost, total_revenue, total_cost, total_profit) VALUES ");
+            "INSERT INTO orders (uuid, order_id, region, country, item_type, sales_channel, order_priority, order_date, " +
+            "ship_date, units_sold, unit_price, unit_cost, total_revenue, total_cost, total_profit) VALUES ");
 
         for (var i = 0; i < orders.Count; i++)
         {
@@ -51,24 +52,46 @@ public class PostgresOrdersRepository(
             if (i > 0) sql.Append(", ");
 
             sql.Append(
-                $"(@uuid{i}, @id{i}, @region{i}, @country{i}, @itemType{i}, @salesChannel{i}, @priority{i}, @date{i}, @shipDate{i}, @unitsSold{i}, @unitPrice{i}, @unitCost{i}, @totalRevenue{i}, @totalCost{i}, @totalProfit{i})");
+                $"(@uuid{i}, @order_id{i}, @region{i}, @country{i}, @item_type{i}, @sales_channel{i}, " +
+                $"@order_priority{i}, @order_date{i}, @ship_date{i}, @units_sold{i}, @unit_price{i}, @unit_cost{i}," +
+                $" @total_revenue{i}, @total_cost{i}, @total_profit{i})");
 
-            parameters.Add(new NpgsqlParameter($"@uuid{i}", order.Uuid.ToString()));
-            parameters.Add(new NpgsqlParameter($"@id{i}", order.Id.Value));
+            parameters.Add(new NpgsqlParameter($"@uuid{i}", NpgsqlTypes.NpgsqlDbType.Uuid)
+                { Value = order.Uuid.ToGuid() });
+            parameters.Add(new NpgsqlParameter($"@order_id{i}", order.Id.Value));
             parameters.Add(new NpgsqlParameter($"@region{i}", order.Region.ToString()));
             parameters.Add(new NpgsqlParameter($"@country{i}", order.Country.ToString()));
-            parameters.Add(new NpgsqlParameter($"@itemType{i}", order.ItemType.ToString()));
-            parameters.Add(new NpgsqlParameter($"@salesChannel{i}", order.SalesChannel.ToString()));
-            parameters.Add(new NpgsqlParameter($"@priority{i}", order.Priority.ToString()));
-            parameters.Add(new NpgsqlParameter($"@date{i}", order.Date.ToString()));
-            parameters.Add(new NpgsqlParameter($"@shipDate{i}", order.ShipDate.ToString()));
-            parameters.Add(new NpgsqlParameter($"@unitsSold{i}", order.UnitsSold.Value));
-            parameters.Add(new NpgsqlParameter($"@unitPrice{i}", order.UnitPrice.Value));
-            parameters.Add(new NpgsqlParameter($"@unitCost{i}", order.UnitCost.Value));
-            parameters.Add(new NpgsqlParameter($"@totalRevenue{i}", order.TotalRevenue.Value));
-            parameters.Add(new NpgsqlParameter($"@totalCost{i}", order.TotalCost.Value));
-            parameters.Add(new NpgsqlParameter($"@totalProfit{i}", order.TotalProfit.Value));
+            parameters.Add(new NpgsqlParameter($"@item_type{i}", order.ItemType.ToString()));
+            parameters.Add(new NpgsqlParameter($"@sales_channel{i}", order.SalesChannel.ToString()));
+            parameters.Add(new NpgsqlParameter($"@order_priority{i}", order.Priority.ToString()));
+            parameters.Add(new NpgsqlParameter($"@order_date{i}", NpgsqlTypes.NpgsqlDbType.Date)
+                { Value = order.Date.ToDate() });
+            parameters.Add(new NpgsqlParameter($"@ship_date{i}", NpgsqlTypes.NpgsqlDbType.Date)
+                { Value = order.ShipDate.ToDate() });
+            parameters.Add(new NpgsqlParameter($"@units_sold{i}", order.UnitsSold.Value));
+            parameters.Add(new NpgsqlParameter($"@unit_price{i}", order.UnitPrice.Value));
+            parameters.Add(new NpgsqlParameter($"@unit_cost{i}", order.UnitCost.Value));
+            parameters.Add(new NpgsqlParameter($"@total_revenue{i}", order.TotalRevenue.Value));
+            parameters.Add(new NpgsqlParameter($"@total_cost{i}", order.TotalCost.Value));
+            parameters.Add(new NpgsqlParameter($"@total_profit{i}", order.TotalProfit.Value));
         }
+
+        sql.Append(
+            " ON CONFLICT (uuid) DO UPDATE SET " +
+            "order_id = EXCLUDED.order_id, " +
+            "region = EXCLUDED.region, " +
+            "country = EXCLUDED.country, " +
+            "item_type = EXCLUDED.item_type, " +
+            "sales_channel = EXCLUDED.sales_channel, " +
+            "order_priority = EXCLUDED.order_priority, " +
+            "order_date = EXCLUDED.order_date, " +
+            "ship_date = EXCLUDED.ship_date, " +
+            "units_sold = EXCLUDED.units_sold, " +
+            "unit_price = EXCLUDED.unit_price, " +
+            "unit_cost = EXCLUDED.unit_cost, " +
+            "total_revenue = EXCLUDED.total_revenue, " +
+            "total_cost = EXCLUDED.total_cost, " +
+            "total_profit = EXCLUDED.total_profit;");
 
         return (sql.ToString(), parameters);
     }

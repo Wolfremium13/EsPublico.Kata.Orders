@@ -1,6 +1,7 @@
 CREATE TABLE orders
 (
     order_id       BIGINT PRIMARY KEY,
+    uuid           UUID UNIQUE,
     order_priority VARCHAR(1),
     order_date     DATE,
     region         VARCHAR(150),

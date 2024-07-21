@@ -1,4 +1,3 @@
-using EsPublico.Kata.Orders.Domain.Order;
 using LanguageExt;
 
 namespace EsPublico.Kata.Orders.Domain.OrderItems;

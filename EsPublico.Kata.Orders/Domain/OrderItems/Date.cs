@@ -18,4 +18,5 @@ public class Date
     }
 
     public override string ToString() => _value.ToString("dd-MM-yyyy");
+    public DateTime ToDate() => _value;
 }

@@ -1,6 +1,6 @@
 using LanguageExt;
 
-namespace EsPublico.Kata.Orders.Domain.Order;
+namespace EsPublico.Kata.Orders.Domain.OrderItems;
 
 public class ShipDate
 {
@@ -18,4 +18,5 @@ public class ShipDate
     }
 
     public override string ToString() => _value.ToString("dd-MM-yyyy");
+    public DateTime ToDate() => _value;
 }
