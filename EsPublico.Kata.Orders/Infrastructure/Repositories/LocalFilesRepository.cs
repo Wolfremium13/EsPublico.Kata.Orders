@@ -16,7 +16,7 @@ public class LocalFilesRepository(ILogger<LocalFilesRepository> logger) : FilesR
             var folderPath = Path.Combine(Path.GetTempPath(), $"kata-orders-{folderDate}");
             Directory.CreateDirectory(folderPath);
 
-            var savingDate = DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss");
+            var savingDate = DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss-fff");
             var filePath = Path.Combine(folderPath, $"orders_batch_{savingDate}.csv");
 
             var fileExists = File.Exists(filePath);

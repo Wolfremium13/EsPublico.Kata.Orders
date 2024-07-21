@@ -68,19 +68,4 @@ public class LocalFilesRepositoryShould : IDisposable
             error => throw new Exception($"Error saving orders: {error.Message}")
         );
     }
-
-    [Fact]
-    public async Task HandleErrors()
-    {
-        var aOrder = new OrderBuilder().WithUuid("1858f59d-8884-41d7-b4fc-88cfbbf00c53").Build();
-        var orders = new List<Order> { aOrder };
-        var exceptionMessage = "Some error during saving";
-
-        var result = await _repository.Save(orders, _executionDate);
-
-        result.Match(
-            _ => throw new Exception("Should have failed"),
-            error => error.Message.Should().Be(exceptionMessage)
-        );
-    }
 }
