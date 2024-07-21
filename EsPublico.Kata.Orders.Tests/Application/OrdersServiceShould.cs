@@ -1,6 +1,7 @@
 using EsPublico.Kata.Orders.Application;
 using EsPublico.Kata.Orders.Domain;
 using EsPublico.Kata.Orders.Infrastructure.Apis;
+using EsPublico.Kata.Orders.Infrastructure.Generators;
 using EsPublico.Kata.Orders.Infrastructure.Repositories;
 using EsPublico.Kata.Orders.Tests.Domain.Builders;
 using FluentAssertions;
@@ -12,6 +13,7 @@ namespace EsPublico.Kata.Orders.Tests.Application;
 
 public class OrdersServiceShould
 {
+    private readonly DateTimeGenerator _dateTimeGenerator;
     private readonly FilesRepository _filesRepository;
     private readonly OrdersApi _ordersApi;
     private readonly OrdersRepository _ordersRepository;
@@ -23,23 +25,31 @@ public class OrdersServiceShould
         _ordersRepository = Substitute.For<OrdersRepository>();
         _filesRepository = Substitute.For<FilesRepository>();
         var logger = Substitute.For<ILogger<OrdersService>>();
-        _service = new OrdersService(_ordersRepository, _filesRepository, _ordersApi, logger);
+        _dateTimeGenerator = Substitute.For<DateTimeGenerator>();
+        _service = new OrdersService(
+            _ordersRepository,
+            _filesRepository,
+            _ordersApi,
+            _dateTimeGenerator,
+            logger);
     }
 
     [Fact]
     public async Task IngestFirstOrders()
     {
+        var executionDate = new DateTime(2021, 10, 10);
+        _dateTimeGenerator.Now().Returns(executionDate);
         var aOrder = new OrderBuilder().WithUuid("1858f59d-8884-41d7-b4fc-88cfbbf00c53").Build();
         var orders = new OrdersBuilder().WithOrder(aOrder).Build();
         _ordersApi.Get().Returns(orders);
         _ordersRepository.Save(orders.Value).Returns(Unit.Default);
-        _filesRepository.Save(orders.Value).Returns(Unit.Default);
+        _filesRepository.Save(orders.Value, executionDate).Returns(Unit.Default);
 
         await _service.Ingest();
 
         await _ordersApi.Received(1).Get();
         await _ordersRepository.Received(1).Save(orders.Value);
-        await _filesRepository.Received(1).Save(orders.Value);
+        await _filesRepository.Received(1).Save(orders.Value, executionDate);
     }
 
     [Fact]
@@ -57,6 +67,8 @@ public class OrdersServiceShould
     [Fact]
     public async Task IngestNextOrders()
     {
+        var executionDate = new DateTime(2021, 10, 10);
+        _dateTimeGenerator.Now().Returns(executionDate);
         var aOrder = new OrderBuilder().WithUuid("1858f59d-8884-41d7-b4fc-88cfbbf00c53").Build();
         var nextOrdersLink = NextOrdersLink.Create("http://example.com/orders?page=2").Match(
             link => link,
@@ -68,8 +80,8 @@ public class OrdersServiceShould
         _ordersApi.Get(nextOrdersLink).Returns(ordersWithNextPage);
         _ordersRepository.Save(firstOrders.Value).Returns(Unit.Default);
         _ordersRepository.Save(ordersWithNextPage.Value).Returns(Unit.Default);
-        _filesRepository.Save(firstOrders.Value).Returns(Unit.Default);
-        _filesRepository.Save(ordersWithNextPage.Value).Returns(Unit.Default);
+        _filesRepository.Save(firstOrders.Value, executionDate).Returns(Unit.Default);
+        _filesRepository.Save(ordersWithNextPage.Value, executionDate).Returns(Unit.Default);
 
         await _service.Ingest();
 
@@ -77,13 +89,15 @@ public class OrdersServiceShould
         await _ordersApi.Received(1).Get(nextOrdersLink);
         await _ordersRepository.Received(1).Save(firstOrders.Value);
         await _ordersRepository.Received(1).Save(ordersWithNextPage.Value);
-        await _filesRepository.Received(1).Save(firstOrders.Value);
-        await _filesRepository.Received(1).Save(ordersWithNextPage.Value);
+        await _filesRepository.Received(1).Save(firstOrders.Value, executionDate);
+        await _filesRepository.Received(1).Save(ordersWithNextPage.Value, executionDate);
     }
 
     [Fact]
     public async Task StopIfErrorIngestingNextOrders()
     {
+        var executionDate = new DateTime(2021, 10, 10);
+        _dateTimeGenerator.Now().Returns(executionDate);
         var aOrder = new OrderBuilder().WithUuid("1858f59d-8884-41d7-b4fc-88cfbbf00c53").Build();
         var nextOrdersLink = NextOrdersLink.Create("http://example.com/orders?page=2").Match(
             link => link,
@@ -94,7 +108,7 @@ public class OrdersServiceShould
         var nextOrdersPageError = new Error("Some error during ingestion");
         _ordersApi.Get(nextOrdersLink).Returns(nextOrdersPageError);
         _ordersRepository.Save(firstOrders.Value).Returns(Unit.Default);
-        _filesRepository.Save(firstOrders.Value).Returns(Unit.Default);
+        _filesRepository.Save(firstOrders.Value, executionDate).Returns(Unit.Default);
 
         var exception = await Record.ExceptionAsync(() => _service.Ingest());
 

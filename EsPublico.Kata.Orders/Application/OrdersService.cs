@@ -1,5 +1,6 @@
 using EsPublico.Kata.Orders.Domain;
 using EsPublico.Kata.Orders.Infrastructure.Apis;
+using EsPublico.Kata.Orders.Infrastructure.Generators;
 using EsPublico.Kata.Orders.Infrastructure.Repositories;
 using LanguageExt;
 using Microsoft.Extensions.Logging;
@@ -10,11 +11,13 @@ public class OrdersService(
     OrdersRepository ordersRepository,
     FilesRepository filesRepository,
     OrdersApi ordersApi,
+    DateTimeGenerator dateTimeGenerator,
     ILogger<OrdersService> logger)
 {
     public async Task Ingest()
     {
-        var maybeFirstOrders = await FirstOrdersCall();
+        var executionDate = dateTimeGenerator.Now();
+        var maybeFirstOrders = await FirstOrdersCall(executionDate);
         if (maybeFirstOrders.IsLeft)
         {
             var errorMessage = maybeFirstOrders.LeftAsEnumerable().First().Message;
@@ -25,7 +28,7 @@ public class OrdersService(
         logger.LogInformation($"Ingested {orders.Value.Count} orders");
         while (orders is OrdersWithNextPage ordersWithNextPage)
         {
-            var nextOrders = await NextOrdersCall(ordersWithNextPage.NextOrdersLink);
+            var nextOrders = await NextOrdersCall(executionDate, ordersWithNextPage.NextOrdersLink);
             if (nextOrders.IsLeft)
             {
                 throw new Exception(
@@ -36,25 +39,27 @@ public class OrdersService(
             orders = nextOrders.RightAsEnumerable().First();
             logger.LogInformation($"Ingested {orders.Value.Count} orders");
         }
+
         logger.LogInformation("Ingestion finished");
     }
 
-    private async Task<Either<Error, Domain.Orders>> FirstOrdersCall()
+    private async Task<Either<Error, Domain.Orders>> FirstOrdersCall(DateTime executionDate)
     {
         return await (
             from orders in ordersApi.Get().ToAsync()
             from _ in ordersRepository.Save(orders.Value).ToAsync()
-            from __ in filesRepository.Save(orders.Value).ToAsync()
+            from __ in filesRepository.Save(orders.Value, executionDate).ToAsync()
             select orders
         ).ToEither();
     }
 
-    private async Task<Either<Error, Domain.Orders>> NextOrdersCall(NextOrdersLink nextOrdersLink)
+    private async Task<Either<Error, Domain.Orders>> NextOrdersCall(DateTime executionDate,
+        NextOrdersLink nextOrdersLink)
     {
         return await (
             from orders in ordersApi.Get(nextOrdersLink).ToAsync()
             from _ in ordersRepository.Save(orders.Value).ToAsync()
-            from __ in filesRepository.Save(orders.Value).ToAsync()
+            from __ in filesRepository.Save(orders.Value, executionDate).ToAsync()
             select orders
         ).ToEither();
     }

@@ -6,5 +6,5 @@ namespace EsPublico.Kata.Orders.Infrastructure.Repositories;
 
 public interface FilesRepository
 {
-    Task<Either<Error, Unit>> Save(List<Order> order);
+    Task<Either<Error, Unit>> Save(List<Order> order, DateTime executionDate);
 }
