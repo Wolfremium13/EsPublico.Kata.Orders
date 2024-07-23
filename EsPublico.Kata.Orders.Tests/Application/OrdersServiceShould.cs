@@ -61,7 +61,7 @@ public class OrdersServiceShould
         var exception = await Record.ExceptionAsync(() => _service.Ingest());
 
         exception.Should().BeOfType<Exception>().Which.Message.Should()
-            .Be($"Error ingesting first orders: {error.Message}");
+            .Be($"Error ingesting first orders from config: {error.Message}");
     }
 
     [Fact]
