@@ -83,7 +83,7 @@ public class OrderShould
                 order.Country.Value.Should().Be(ValidCountry);
                 order.ItemType.ToString().Should().Be(ValidItemType);
                 order.SalesChannel.ToString().Should().Be(ValidSalesChannel);
-                order.Priority.ToString().Should().Be(ValidPriority);
+                order.Priority.Value.Should().Be(ValidPriority);
                 order.Date.ToString().Should().Be("27-07-2012");
                 order.ShipDate.ToString().Should().Be("28-07-2012");
                 order.UnitsSold.Value.Should().Be(ValidUnitsSold);

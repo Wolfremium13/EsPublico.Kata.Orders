@@ -42,7 +42,7 @@ public class LocalFilesRepository(
                                  order.Country.Value,
                                  order.ItemType.ToString(),
                                  order.SalesChannel.ToString(),
-                                 order.Priority.ToString(),
+                                 order.Priority.Value,
                                  order.Date.ToString(),
                                  order.ShipDate.ToString(),
                                  order.UnitsSold.Value,

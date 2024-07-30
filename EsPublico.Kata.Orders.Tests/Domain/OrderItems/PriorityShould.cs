@@ -16,7 +16,7 @@ public class PriorityShould
         var validPriority = Priority.Create(aValidPriority);
 
         validPriority.Match(
-            value => value.ToString().Should().Be(aValidPriority),
+            value => value.Value.Should().Be(aValidPriority),
             error => error.Should().BeNull()
         );
     }

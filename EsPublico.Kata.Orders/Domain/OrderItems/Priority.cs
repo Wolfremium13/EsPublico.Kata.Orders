@@ -4,8 +4,8 @@ namespace EsPublico.Kata.Orders.Domain.OrderItems;
 
 public class Priority
 {
-    private readonly string? _value;
-    private Priority(string? givenPriority) => _value = givenPriority;
+    private Priority(string givenPriority) => Value = givenPriority;
+    public string Value { get; }
 
     public static Either<Error, Priority> Create(string? givenPriority)
     {
@@ -22,8 +22,6 @@ public class Priority
         return new InvalidParameter(
             $"Invalid Priority: {givenPriority}, expected one of {string.Join(", ", AllowedPriorities())}");
     }
-
-    public override string? ToString() => _value;
 
     private static bool IsPriorityAllowed(string? givenPriority) =>
         AllowedPriorities().Any(allowedPriority => allowedPriority == givenPriority);
