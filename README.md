@@ -47,15 +47,15 @@ You're able to turn on/off some functionalities by changing the `appsettings.jso
 
 ```json
 {
-    "AppSettings": {
-        "ImportOrders": true,
-        "ExportOrders": true
-    }
+  "ProgramSettings": {
+    "Ingest": true,
+    "Summary": true
+  }
 }
 ```
 
-- ImportOrders: Import the orders from the API to the database.
-- ExportOrders: Export the orders from the database to a CSV file.
+- Ingest: Import the orders from the API to the database 100 by 100.
+- Summary: Export the orders aggregated by the fields: Region, Country, Item Type, Sales Channel, Order Priority into a CSV file.
 
 > 💡 **Note**: If something fails during the import process, you can run the application again to try to import the orders again.
 > You can start changing the `page` parameter in the API endpoint to get the orders from the next page.
