@@ -14,7 +14,7 @@ This project is a programming kata that involves importing a list of online orde
 - Dotnet 8.0
 - C# 12
 - Postgres
-- Docker
+- Docker Compose
 
 ## 📕 Context
 
@@ -28,6 +28,37 @@ This is a set of orders that have been manually collected historically, with no 
 - Additionally, generate a file with the records sorted by order number.
 - The field by which the resulting file must be sorted is orderId.
 - The final summary should show the count for each type of the fields: Region, Country, Item Type, Sales Channel, Order Priority.
+
+## 🚀 How to Run
+
+Launch the postgres instance with docker-compose:
+
+```bash
+docker-compose up -d postgres
+```
+
+Run the application:
+
+```bash
+dotnet run
+```
+
+You're able to turn on/off some functionalities by changing the `appsettings.json` file.
+
+```json
+{
+    "AppSettings": {
+        "ImportOrders": true,
+        "ExportOrders": true
+    }
+}
+```
+
+- ImportOrders: Import the orders from the API to the database.
+- ExportOrders: Export the orders from the database to a CSV file.
+
+> 💡 **Note**: If something fails during the import process, you can run the application again to try to import the orders again.
+> You can start changing the `page` parameter in the API endpoint to get the orders from the next page.
 
 ## 📦 REST API
 
