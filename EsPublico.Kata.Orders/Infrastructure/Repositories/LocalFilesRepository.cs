@@ -38,7 +38,7 @@ public class LocalFilesRepository(
                              .Select(order => string.Join(",",
                                  order.Uuid.ToString(),
                                  order.Id.Value,
-                                 order.Region.ToString(),
+                                 order.Region.Value,
                                  order.Country.Value,
                                  order.ItemType.ToString(),
                                  order.SalesChannel.ToString(),

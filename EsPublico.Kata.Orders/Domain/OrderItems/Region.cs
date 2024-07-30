@@ -4,8 +4,9 @@ namespace EsPublico.Kata.Orders.Domain.OrderItems;
 
 public class Region
 {
-    private readonly string? _value;
-    private Region(string? givenRegion) => _value = givenRegion;
+    private Region(string givenRegion) => Value = givenRegion;
+    
+    public string Value { get; }
 
     public static Either<Error, Region> Create(string? givenRegion)
     {
@@ -16,6 +17,4 @@ public class Region
 
         return new Region(givenRegion);
     }
-
-    public override string? ToString() => _value;
 }

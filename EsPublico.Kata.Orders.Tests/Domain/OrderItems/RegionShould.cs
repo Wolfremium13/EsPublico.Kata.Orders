@@ -13,7 +13,7 @@ public class RegionShould
         var validRegion = Region.Create(aRegion);
 
         validRegion.Match(
-            value => value.ToString().Should().Be(aRegion),
+            value => value.Value.Should().Be(aRegion),
             error => error.Should().BeNull()
         );
     }
