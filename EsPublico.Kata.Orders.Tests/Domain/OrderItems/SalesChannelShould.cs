@@ -13,7 +13,7 @@ public class SalesChannelShould
         var validSalesChannel = SalesChannel.Create(aSalesChannel);
 
         validSalesChannel.Match(
-            value => value.ToString().Should().Be(aSalesChannel),
+            value => value.Value.Should().Be(aSalesChannel),
             error => error.Should().BeNull()
         );
     }

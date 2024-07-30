@@ -4,8 +4,8 @@ namespace EsPublico.Kata.Orders.Domain.OrderItems;
 
 public class SalesChannel
 {
-    private readonly string? _value;
-    private SalesChannel(string? givenSalesChannel) => _value = givenSalesChannel;
+    private SalesChannel(string givenSalesChannel) => Value = givenSalesChannel;
+    public string Value { get; }
 
     public static Either<Error, SalesChannel> Create(string? givenSalesChannel)
     {
@@ -16,6 +16,4 @@ public class SalesChannel
 
         return new SalesChannel(givenSalesChannel);
     }
-
-    public override string? ToString() => _value;
 }
