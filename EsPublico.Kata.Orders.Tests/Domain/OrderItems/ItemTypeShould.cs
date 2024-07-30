@@ -13,7 +13,7 @@ public class ItemTypeShould
         var validItemType = ItemType.Create(anItemType);
 
         validItemType.Match(
-            value => value.ToString().Should().Be(anItemType),
+            value => value.Value.Should().Be(anItemType),
             error => error.Should().BeNull()
         );
     }

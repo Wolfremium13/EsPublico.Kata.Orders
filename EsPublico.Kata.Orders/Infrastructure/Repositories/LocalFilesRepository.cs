@@ -40,7 +40,7 @@ public class LocalFilesRepository(
                                  order.Id.Value,
                                  order.Region.Value,
                                  order.Country.Value,
-                                 order.ItemType.ToString(),
+                                 order.ItemType.Value,
                                  order.SalesChannel.Value,
                                  order.Priority.Value,
                                  order.Date.ToString(),
