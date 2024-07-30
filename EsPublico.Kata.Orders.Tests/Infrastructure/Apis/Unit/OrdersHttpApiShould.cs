@@ -68,8 +68,9 @@ public class OrdersHttpApiShould
             {
                 orders.Value.Count.Should().Be(1);
                 orders.Value.First().Uuid.ToString().Should().Be("1858f59d-8884-41d7-b4fc-88cfbbf00c53");
-                orders.Should().BeOfType<OrdersWithNextPage>()
-                    .Which.NextOrdersLink.ToString().Should().Be(nextOrdersLink.ToString());
+                NextOrdersLink tempQualifier = orders.Should().BeOfType<OrdersWithNextPage>()
+                    .Which.NextOrdersLink;
+                tempQualifier.Value.Should().Be(nextOrdersLink.Value);
             },
             error => error.Should().BeNull()
         );

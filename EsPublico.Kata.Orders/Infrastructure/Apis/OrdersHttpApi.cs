@@ -73,7 +73,7 @@ namespace EsPublico.Kata.Orders.Infrastructure.Apis
         {
             var client = httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Add("Accept", "application/json");
-            var response = await client.GetAsync(nextOrdersLink.ToString());
+            var response = await client.GetAsync(nextOrdersLink.Value);
             return response;
         }
 

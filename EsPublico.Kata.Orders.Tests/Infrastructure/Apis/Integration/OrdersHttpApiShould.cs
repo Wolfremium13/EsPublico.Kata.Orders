@@ -44,8 +44,9 @@ public class OrdersHttpApiShould : IDisposable
             {
                 const int numberOfOrdersPerPage = 100;
                 orders.Value.Count.Should().Be(numberOfOrdersPerPage);
-                orders.Should().BeOfType<OrdersWithNextPage>()
-                    .Which.NextOrdersLink.ToString().Should().Be($"{_server.Url}/v1/orders?page=2&max-per-page=100");
+                NextOrdersLink tempQualifier = orders.Should().BeOfType<OrdersWithNextPage>()
+                    .Which.NextOrdersLink;
+                tempQualifier.Value.Should().Be($"{_server.Url}/v1/orders?page=2&max-per-page=100");
             },
             error => error.Should().BeNull()
         );

@@ -12,7 +12,7 @@ public class NextOrdersLinkShould
         var validNextOrdersLink = NextOrdersLink.Create(aNextOrdersLink);
 
         validNextOrdersLink.Match(
-            value => value.ToString().Should().Be(aNextOrdersLink),
+            value => value.Value.Should().Be(aNextOrdersLink),
             error => error.Should().BeNull()
         );
     }
