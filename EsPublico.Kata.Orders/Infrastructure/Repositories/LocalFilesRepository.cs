@@ -36,7 +36,7 @@ public class LocalFilesRepository(
                 foreach (var csvLine in orders
                              .OrderByDescending(order => order.Id.Value)
                              .Select(order => string.Join(",",
-                                 order.Uuid.ToString(),
+                                 order.Uuid.Value,
                                  order.Id.Value,
                                  order.Region.Value,
                                  order.Country.Value,

@@ -67,8 +67,8 @@ public class LocalFilesRepositoryShould : IDisposable
                 var files = Directory.GetFiles(_folderPath, "orders_*.csv");
                 files.Should().HaveCount(1);
                 var fileContent = File.ReadAllText(files.First());
-                fileContent.Should().Contain(aOrder.Uuid.ToString());
-                fileContent.Should().Contain(anotherOrder.Uuid.ToString());
+                fileContent.Should().Contain(aOrder.Uuid.Value);
+                fileContent.Should().Contain(anotherOrder.Uuid.Value);
             },
             error => throw new Exception($"Error saving orders: {error.Message}")
         );

@@ -77,7 +77,7 @@ public class OrderShould
         validOrder.Match(
             order =>
             {
-                order.Uuid.ToString().Should().Be(validUuid);
+                order.Uuid.Value.Should().Be(validUuid);
                 order.Id.Value.Should().Be(ValidId);
                 order.Region.Value.Should().Be(ValidRegion);
                 order.Country.Value.Should().Be(ValidCountry);

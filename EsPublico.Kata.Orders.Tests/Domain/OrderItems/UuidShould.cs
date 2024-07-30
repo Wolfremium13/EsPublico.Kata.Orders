@@ -13,7 +13,7 @@ public class UuidShould
         var validUuid = Uuid.Create(anUuid);
 
         validUuid.Match(
-            value => value.ToString().Should().Be(anUuid),
+            value => value.Value.Should().Be(anUuid),
             error => error.Should().BeNull()
         );
     }
