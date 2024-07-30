@@ -65,7 +65,7 @@ public class PostgresOrdersRepository(
             parameters.Add(new NpgsqlParameter($"@sales_channel{i}", order.SalesChannel.Value));
             parameters.Add(new NpgsqlParameter($"@order_priority{i}", order.Priority.Value));
             parameters.Add(new NpgsqlParameter($"@order_date{i}", NpgsqlTypes.NpgsqlDbType.Date)
-                { Value = order.Date.ToDate() });
+                { Value = order.Date.Value });
             parameters.Add(new NpgsqlParameter($"@ship_date{i}", NpgsqlTypes.NpgsqlDbType.Date)
                 { Value = order.ShipDate.ToDate() });
             parameters.Add(new NpgsqlParameter($"@units_sold{i}", order.UnitsSold.Value));
