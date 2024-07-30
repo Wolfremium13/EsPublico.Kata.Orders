@@ -67,7 +67,7 @@ public class PostgresOrdersRepository(
             parameters.Add(new NpgsqlParameter($"@order_date{i}", NpgsqlTypes.NpgsqlDbType.Date)
                 { Value = order.Date.Value });
             parameters.Add(new NpgsqlParameter($"@ship_date{i}", NpgsqlTypes.NpgsqlDbType.Date)
-                { Value = order.ShipDate.ToDate() });
+                { Value = order.ShipDate.Value });
             parameters.Add(new NpgsqlParameter($"@units_sold{i}", order.UnitsSold.Value));
             parameters.Add(new NpgsqlParameter($"@unit_price{i}", order.UnitPrice.Value));
             parameters.Add(new NpgsqlParameter($"@unit_cost{i}", order.UnitCost.Value));

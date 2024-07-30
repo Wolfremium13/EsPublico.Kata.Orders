@@ -4,8 +4,8 @@ namespace EsPublico.Kata.Orders.Domain.OrderItems;
 
 public class ShipDate
 {
-    private readonly DateTime _value;
-    private ShipDate(DateTime givenDate) => _value = givenDate;
+    private ShipDate(DateTime givenDate) => Value = givenDate;
+    public DateTime Value { get; }
 
     public static Either<Error, ShipDate> Create(string? givenDate)
     {
@@ -17,6 +17,5 @@ public class ShipDate
         return new ShipDate(date);
     }
 
-    public override string ToString() => _value.ToString("dd-MM-yyyy");
-    public DateTime ToDate() => _value;
+    public override string ToString() => Value.ToString("dd-MM-yyyy");
 }
