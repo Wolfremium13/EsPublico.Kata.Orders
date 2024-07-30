@@ -4,8 +4,8 @@ namespace EsPublico.Kata.Orders.Domain.OrderItems;
 
 public class Country
 {
-    private readonly string? _value;
-    private Country(string? givenCountry) => _value = givenCountry;
+    public string Value { get; }
+    private Country(string givenCountry) => Value = givenCountry;
 
     public static Either<Error, Country> Create(string? givenCountry)
     {
@@ -17,5 +17,4 @@ public class Country
         return new Country(givenCountry);
     }
 
-    public override string? ToString() => _value;
 }

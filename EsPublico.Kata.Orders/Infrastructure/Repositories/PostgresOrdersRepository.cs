@@ -60,7 +60,7 @@ public class PostgresOrdersRepository(
                 { Value = order.Uuid.ToGuid() });
             parameters.Add(new NpgsqlParameter($"@order_id{i}", order.Id.Value));
             parameters.Add(new NpgsqlParameter($"@region{i}", order.Region.ToString()));
-            parameters.Add(new NpgsqlParameter($"@country{i}", order.Country.ToString()));
+            parameters.Add(new NpgsqlParameter($"@country{i}", order.Country.Value));
             parameters.Add(new NpgsqlParameter($"@item_type{i}", order.ItemType.ToString()));
             parameters.Add(new NpgsqlParameter($"@sales_channel{i}", order.SalesChannel.ToString()));
             parameters.Add(new NpgsqlParameter($"@order_priority{i}", order.Priority.ToString()));

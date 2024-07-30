@@ -13,7 +13,7 @@ public class CountryShould
         var validCountry = Country.Create(aCountry);
 
         validCountry.Match(
-            value => value.ToString().Should().Be(aCountry),
+            value => value.Value.Should().Be(aCountry),
             error => error.Should().BeNull()
         );
     }

@@ -80,7 +80,7 @@ public class OrderShould
                 order.Uuid.ToString().Should().Be(validUuid);
                 order.Id.Value.Should().Be(ValidId);
                 order.Region.ToString().Should().Be(ValidRegion);
-                order.Country.ToString().Should().Be(ValidCountry);
+                order.Country.Value.Should().Be(ValidCountry);
                 order.ItemType.ToString().Should().Be(ValidItemType);
                 order.SalesChannel.ToString().Should().Be(ValidSalesChannel);
                 order.Priority.ToString().Should().Be(ValidPriority);
